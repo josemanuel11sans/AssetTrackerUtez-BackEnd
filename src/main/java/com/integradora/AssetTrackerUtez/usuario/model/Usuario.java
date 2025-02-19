@@ -1,11 +1,14 @@
 package com.integradora.AssetTrackerUtez.usuario.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.integradora.AssetTrackerUtez.role.model.Role;
+import com.integradora.AssetTrackerUtez.rol.model.Rol;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -16,15 +19,15 @@ import java.util.Set;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @NotBlank(message = "El nombre es obligatorio")
     @Column(name = "nombre", columnDefinition = "VARCHAR(100)")
     private String nombre;
 
     @NotBlank(message = "Los apellidos son obligatorios")
-    @Column(name = "apellido", columnDefinition = "VARCHAR(100)")
-    private String apellido;
+    @Column(name = "apellidos", columnDefinition = "VARCHAR(100)")
+    private String apellidos;
 
     @Email(message = "Debe ser un correo válido")
     @NotBlank(message = "El correo es obligatorio")
@@ -35,13 +38,20 @@ public class Usuario {
     @Column(name = "contrasena", columnDefinition = "VARCHAR(255)")
     private String contrasena;
 
-    @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
-    private boolean status = true;
+    @Column(name = "estado", columnDefinition = "BOOL DEFAULT TRUE")
+    private boolean estado = true;
 
     //Este campo no tiene ni getter ni setter
-    @Column(name = "create_at",columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    @CreationTimestamp
+    @Column(name = "fechaCreacion",columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
+    @UpdateTimestamp
+    @Column(name = "ultimaActualizacion",columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ultimaActualizacion;
+    @Column(name = "codigo", columnDefinition = "VARCHAR(10)")
+    private String codigo;
 
     @ManyToMany
     @JsonIgnore
@@ -50,26 +60,91 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles = new HashSet<>();
+    private Set<Rol> rol = new HashSet<>();
 
     public Usuario() {
     }
 
-    public Usuario(String nombre, String apellido, String correo, String contrasena, boolean status, Set<Role> roles) {
+    public Usuario(String nombre, String apellidos, String correo, String contrasena, boolean estado, Set<Rol> rol) {
         this.nombre = nombre;
-        this.apellido = apellido;
+        this.apellidos = apellidos;
         this.correo = correo;
         this.contrasena = contrasena;
-        this.status = status;
-        this.roles = roles;
+        this.estado = estado;
+        this.rol = rol;
+    }
+
+    public Usuario(String nombre, String apellidos, String correo, String contrasena, boolean estado, Date fechaCreacion, Date ultimaActualizacion, String codigo, Set<Rol> rol) {
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.correo = correo;
+        this.contrasena = contrasena;
+        this.estado = estado;
+        this.fechaCreacion = fechaCreacion;
+        this.ultimaActualizacion = ultimaActualizacion;
+        this.codigo = codigo;
+        this.rol = rol;
+    }
+
+    public Usuario(String nombre, String apellidos, String correo, String contrasena, boolean estado, Date fechaCreacion, Date ultimaActualizacion) {
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.correo = correo;
+        this.contrasena = contrasena;
+        this.estado = estado;
+        this.fechaCreacion = new Date();
+        this.ultimaActualizacion = ultimaActualizacion;
+    }
+
+    public Usuario(String nombre, String apellidos, String correo, String contrasena, boolean estado, Date fechaCreacion, Date ultimaActualizacion, Set<Rol> rol) {
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.correo = correo;
+        this.contrasena = contrasena;
+        this.estado = estado;
+        this.fechaCreacion = fechaCreacion;
+        this.ultimaActualizacion = ultimaActualizacion;
+        this.rol = rol;
+    }
+
+    public Date getUltimaActualizacion() {
+        return ultimaActualizacion;
+    }
+
+    public void setUltimaActualizacion(Date ultimaActualizacion) {
+        this.ultimaActualizacion = ultimaActualizacion;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
     public String getApellido() {
-        return apellido;
+        return apellidos;
     }
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
+    public void setApellido(String apellidos) {
+        this.apellidos = apellidos;
     }
 
     public String getNombre() {
@@ -80,12 +155,12 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isEstado() {
+        return estado;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setEstado(boolean estado) {
+        this.estado = estado;
     }
 
     public String getContrasena() {
@@ -104,11 +179,19 @@ public class Usuario {
         this.correo = correo;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    public Set<Rol> getRol() {
+        return rol;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRol(Set<Rol> rol) {
+        this.rol = rol;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 }

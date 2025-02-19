@@ -1,4 +1,4 @@
-package com.integradora.AssetTrackerUtez.role.model;
+package com.integradora.AssetTrackerUtez.rol.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.integradora.AssetTrackerUtez.usuario.model.Usuario;
@@ -8,8 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "roles")
-public class Role {
+@Table(name = "rol")
+public class Rol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,13 +17,13 @@ public class Role {
     @Column(nullable = false, unique = true)
     private String nombre;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "rol")
     @JsonBackReference
     private Set<Usuario> usuarios = new HashSet<>();
 
-    public Role() {}
+    public Rol() {}
 
-    public Role(String nombre) {
+    public Rol(String nombre) {
         this.nombre = nombre;
     }
 
