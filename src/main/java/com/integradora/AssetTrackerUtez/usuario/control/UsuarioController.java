@@ -35,7 +35,6 @@ public class UsuarioController {
     public ResponseEntity<Message> update(@RequestBody UsuarioDto usuarioDto) {
         return usuarioService.update(usuarioDto);
     }
-
     @PutMapping("/changeStatus")
     public ResponseEntity<Message> changeStatus(@RequestBody UsuarioDto usuarioDto) {
         return usuarioService.changeStatus(usuarioDto);
@@ -44,5 +43,9 @@ public class UsuarioController {
     @GetMapping("/actives")
     public ResponseEntity<Message> findActives() {
         return usuarioService.findActives();
+    }
+    @PostMapping("/delete")
+    public ResponseEntity<Message> delete(@RequestBody UsuarioDto usuarioDto){
+        return usuarioService.delete(usuarioDto);
     }
 }

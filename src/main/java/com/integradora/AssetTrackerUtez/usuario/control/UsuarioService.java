@@ -140,6 +140,21 @@ public class UsuarioService {
         return new ResponseEntity<>(new Message(usuario, "Estado del usuario actualizado correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<Message> delete(UsuarioDto dto) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(dto.getId());
+        if (!usuarioOptional.isPresent()) {
+            return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
+        }
+        try {
+            usuarioRepository.deleteById(dto.getId());
+            logger.info("El usuario fue eliminado correctamente");
+            return new ResponseEntity<>(new Message("Usuario eliminado correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Message("No se pudo eliminar el usuario", TypesResponse.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findActives(){
         List<Usuario> respuestas = usuarioRepository.findAllByEstadoIsTrue();
