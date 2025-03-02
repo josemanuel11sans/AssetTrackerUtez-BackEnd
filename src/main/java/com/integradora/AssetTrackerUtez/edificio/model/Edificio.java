@@ -45,6 +45,38 @@ public class Edificio {
         this.status = status;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public List<Espacio> getEspacios() {
+        return espacios;
+    }
+
+    public void setEspacios(List<Espacio> espacios) {
+        this.espacios = espacios;
+    }
+
     public String getNombre() {
         return nombre;
     }
