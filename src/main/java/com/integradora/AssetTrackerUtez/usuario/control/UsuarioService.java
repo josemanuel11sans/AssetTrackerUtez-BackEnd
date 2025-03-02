@@ -1,5 +1,8 @@
 package com.integradora.AssetTrackerUtez.usuario.control;
 
+import com.integradora.AssetTrackerUtez.notificacionRegistro.control.NotificacionRegistroService;
+import com.integradora.AssetTrackerUtez.notificacionRegistro.model.NotificacionRegistroDto;
+import com.integradora.AssetTrackerUtez.notificacionRegistro.model.NotificacionRegistroRepository;
 import com.integradora.AssetTrackerUtez.rol.model.Rol;
 import com.integradora.AssetTrackerUtez.rol.model.RolRepository;
 import com.integradora.AssetTrackerUtez.usuario.model.Usuario;
@@ -26,13 +29,17 @@ public class UsuarioService {
     private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final NotificacionRegistroRepository notificacionRegistroRepository;
+    private final  NotificacionRegistroService notificacionRegistroService;
 
     //private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository, RolRepository rolRepository/*, PasswordEncoder passwordEncoder*/) {
+    public UsuarioService(UsuarioRepository usuarioRepository, RolRepository rolRepository/*, PasswordEncoder passwordEncoder*/, NotificacionRegistroRepository notificacionRegistroRepository, NotificacionRegistroService notificacionRegistroService) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         /*this.passwordEncoder = passwordEncoder;*/
+        this.notificacionRegistroRepository = notificacionRegistroRepository;
+        this.notificacionRegistroService = notificacionRegistroService;
     }
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findAll() {
@@ -77,16 +84,21 @@ public class UsuarioService {
                 dto.getCorreo(),
                 //contrasenaEncriptada,
                 dto.getContrasena(),
-                true,
+                false,
                 dto.getFechaCreacion(),
                 dto.getUltimaActualizacion()
         );
         // Asociar el rol al usuario
         usuario.getRol().add(rol);
         usuario = usuarioRepository.saveAndFlush(usuario);
+
         if (usuario == null) {
             return new ResponseEntity<>(new Message("El usuario no se registró", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
+        // Crear notificación de registro
+        NotificacionRegistroDto notificacionDto = new NotificacionRegistroDto();
+        notificacionDto.setUsuario(new UsuarioDto(usuario.getId(), usuario.getNombre(), usuario.getApellidos(), usuario.getCorreo(), null, null, null, null, null));
+        notificacionRegistroService.crearNotificacion(notificacionDto);
         logger.info("El usuario se registró correctamente");
         return new ResponseEntity<>(new Message(usuario.getCorreo(), "Usuario registrado correctamente", TypesResponse.SUCCESS), HttpStatus.CREATED);
     }
