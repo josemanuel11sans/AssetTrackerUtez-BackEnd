@@ -66,6 +66,10 @@ public class EdificioService {
     //Guardar un edificio
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> GuardarEdificio(EdificioDTO dto){
+        //valida si el nombre ya existe
+        if(edificioRepository.existsByNombre(capitalizarPrimeraLetra(dto.getNombre()))){
+            return new ResponseEntity<>(new Message("El nombre ya existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
         //validacion del nombre
         if(dto.getNombre().length() < 3){
             return new ResponseEntity<>(new Message("El nombre no puede tener menos de 3 caracteres ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
@@ -96,40 +100,48 @@ public class EdificioService {
 
     //actualizar un edificio
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<Object> AcrualizarEdificio(EdificioDTO dto){
+    public ResponseEntity<Object> actualizarEdificio(EdificioDTO dto) {
         Optional<Edificio> optional = edificioRepository.findById(dto.getId());
-
-        if(!optional.isPresent()){
+        // Verifica si el edificio existe
+        if (!optional.isPresent()) {
             return new ResponseEntity<>(new Message("Edificio no encontrado", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
-        //optiene el edificio actual desde la base de datos
+        // Obtiene el edificio actual desde la base de datos
         Edificio edificio = optional.get();
-        //validacion del nombre
-        if(dto.getNombre().length() < 3){
-            return new ResponseEntity<>(new Message("El nombre no puede tener menos de 3 caracteres ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
-        } else if (dto.getNombre().length() > 100){
-            return new ResponseEntity<>(new Message("El nombre no pede tener mas de 100 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        // Validación y actualización del nombre (si se proporciona)
+        if (dto.getNombre() != null) {
+            if (dto.getNombre().length() < 3) {
+                return new ResponseEntity<>(new Message("El nombre no puede tener menos de 3 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            } else if (dto.getNombre().length() > 100) {
+                return new ResponseEntity<>(new Message("El nombre no puede tener más de 100 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            // Validación de caracteres no permitidos
+            if (!dto.getNombre().matches("^[a-zA-Z0-9 ]*$")) {
+                return new ResponseEntity<>(new Message("El nombre solo puede contener letras y números", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            // Primera letra mayúscula
+            dto.setNombre(capitalizarPrimeraLetra(dto.getNombre()));
+            edificio.setNombre(dto.getNombre());
         }
-        //validacion de caracteres no permitidos
-        if(!dto.getNombre().matches("^[a-zA-Z0-9 ]*$")){
-            return new ResponseEntity<>(new Message("El nombre solo puede contener letras y numeros", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        // Validación y actualización del número de pisos (si se proporciona)
+        if (dto.getNumeroPisos() != null) {
+            if (dto.getNumeroPisos() < 1) {
+                return new ResponseEntity<>(new Message("El número de pisos no puede ser menor a 1", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+
+            // Validación de caracteres no permitidos en pisos
+            if (!dto.getNumeroPisos().toString().matches("^[0-9]*$")) {
+                return new ResponseEntity<>(new Message("El número de pisos solo puede contener números", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+
+            edificio.setNumeroPisos(dto.getNumeroPisos());
         }
-        //validacion del numero de pisos
-        if(dto.getNumeroPisos() < 1){
-            return new ResponseEntity<>(new Message("El numero de pisos no puede ser menor a 1", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
-        }
-        //validacion de caracteres no permitidos en pisos
-        if(!dto.getNumeroPisos().toString().matches("^[0-9]*$")){
-            return new ResponseEntity<>(new Message("El numero de pisos solo puede contener numeros", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
-        }
-        //primerta letra mayuscula
-        dto.setNombre(capitalizarPrimeraLetra(dto.getNombre()));
-        edificio.setNombre(dto.getNombre());
-        edificio.setNumeroPisos(dto.getNumeroPisos());
+        // Guarda los cambios en la base de datos
         edificio = edificioRepository.saveAndFlush(edificio);
-        if(edificio == null){
+        if (edificio == null) {
             return new ResponseEntity<>(new Message("Error al actualizar el edificio", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
+
         return new ResponseEntity<>(new Message(edificio, "Edificio actualizado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 

@@ -11,6 +11,7 @@ public interface EdificioRepository  extends JpaRepository<Edificio, Long> {
     List<Edificio> findAll();
     //buscar edificio por id
     //Edificio findById(Long id);
-
+    //valida si existe el nombre regresar un boolean
+    boolean existsByNombre(String nombre);
     //Edificio saveAndFlush(Edificio edificio);
 }
