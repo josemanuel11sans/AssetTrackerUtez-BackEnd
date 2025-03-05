@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.integradora.AssetTrackerUtez.recurso.model.Recurso;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 import java.util.List;
@@ -23,15 +25,19 @@ public class Responsable {
     @Column(name = "divisionAcademica", columnDefinition = "VARCHAR(100)")
     private String divisionAcademica;
 
-    @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
-    private boolean status = true;
+    @Column(name = "estado", columnDefinition = "BOOL DEFAULT TRUE")
+    private boolean estado = true;
 
     //Este campo no tiene ni getter ni setter
-    @Column(name = "create_at",columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    @CreationTimestamp
+    @Column(name = "fechaCreacion",columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
 
-    // FALTA ÚLTIMA ACTUALIZACIÓN
+    @UpdateTimestamp
+    @Column(name = "ultimaActualizacion",columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ultimaActualizacion;
 
     @OneToMany(mappedBy = "responsable")
     private List<Recurso> recursos;
@@ -39,10 +45,12 @@ public class Responsable {
     public Responsable() {
     }
 
-    public Responsable(String nombre, String divisionAcademica, boolean status) {
+    public Responsable(String nombre, String divisionAcademica, boolean estado, Date fechaCreacion, Date ultimaActualizacion) {
         this.nombre = nombre;
         this.divisionAcademica = divisionAcademica;
-        this.status = status;
+        this.estado = estado;
+        this.fechaCreacion = fechaCreacion;
+        this.ultimaActualizacion = ultimaActualizacion;
     }
 
     public String getNombre() {
@@ -61,11 +69,20 @@ public class Responsable {
         this.divisionAcademica = divisionAcademica;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isEstado() {
+        return estado;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setEstado(boolean estado) {
+        this.estado = estado;
     }
+
+    public Date getUltimaActualizacion() {
+        return ultimaActualizacion;
+    }
+
+    public void setUltimaActualizacion(Date ultimaActualizacion) {
+        this.ultimaActualizacion = ultimaActualizacion;
+    }
+
 }
