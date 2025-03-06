@@ -6,11 +6,11 @@ import jakarta.validation.constraints.NotNull;
 
 public class EdificioDTO {
     //Atributos
-    @NotNull(groups = {UsuarioDto.Modify.class, UsuarioDto.ChangeStatus.class}, message = "Es necesario el id")
+    @NotNull(groups = {EdificioDTO.Modify.class, EdificioDTO.ChangeStatus.class}, message = "Es necesario el id")
     private Long id;
-    @NotBlank(groups = {UsuarioDto.Register.class, UsuarioDto.Modify.class}, message = "El nombre no puede quedar vacío")
+    @NotBlank(groups = {EdificioDTO.Register.class, EdificioDTO.Modify.class}, message = "El nombre no puede quedar vacío")
     private String nombre;
-    @NotNull(groups = {UsuarioDto.Register.class, UsuarioDto.Modify.class}, message ="Es nesesario el numero de pisos")
+    @NotNull(groups = {EdificioDTO.Register.class, EdificioDTO.Modify.class}, message ="Es nesesario el numero de pisos")
     private Integer numeroPisos;
 
     //Constructores
