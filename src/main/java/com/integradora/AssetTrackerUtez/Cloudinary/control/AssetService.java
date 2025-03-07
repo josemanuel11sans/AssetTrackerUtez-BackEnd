@@ -19,7 +19,7 @@ public class AssetService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
-
+    /*
     // Crear un nuevo Asset
     public Asset createAsset(String name, String description, MultipartFile file) {
         String imageUrl = cloudinaryService.uploadFile(file);
@@ -29,7 +29,7 @@ public class AssetService {
         asset.setImageUrl(imageUrl);
         return assetRepository.save(asset);
     }
-
+*/
     // Obtener todos los Assets
     public List<Asset> getAllAssets() {
         return assetRepository.findAll();
@@ -39,22 +39,18 @@ public class AssetService {
     public Optional<Asset> getAssetById(Long id) {
         return assetRepository.findById(id);
     }
-
+    /*
     // Actualizar un Asset
     public Asset updateAsset(Long id, String name, String description, MultipartFile file) {
-        Optional<Asset> optionalAsset = assetRepository.findById(id);
-        if (optionalAsset.isPresent()) {
-            Asset asset = optionalAsset.get();
-            asset.setName(name);
-            asset.setDescription(description);
-            if (file != null && !file.isEmpty()) {
-                String imageUrl = cloudinaryService.uploadFile(file);
-                asset.setImageUrl(imageUrl);
-            }
-            return assetRepository.save(asset);
-        }
-        return null;
+        Asset asset = assetRepository.findById(id).orElse
+                (new Asset());
+        asset.setName(name);
+        asset.setDescription(description);
+        asset.setImageUrl(cloudinaryService.uploadFile(file));
+        return assetRepository.save(asset);
     }
+    */
+
 
     // Eliminar un Asset
     public void deleteAsset(Long id) {

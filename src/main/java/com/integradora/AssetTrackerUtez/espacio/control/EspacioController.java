@@ -16,11 +16,11 @@ public class EspacioController {
         this.espacioService = espacioService;
     }
 
-    @GetMapping("/enable")
+    @GetMapping("/all/enable")
     public ResponseEntity<Object> findAllEnable(){
         return espacioService.findAllEnable();
     }
-    @GetMapping("/disable")
+    @GetMapping("/all/disable")
     public ResponseEntity<Object> findAllDisable(){
         return espacioService.findAllDisable();
     }
@@ -44,6 +44,11 @@ public class EspacioController {
     @PostMapping("/save")
     public ResponseEntity<Object> save(@ModelAttribute EspaciosDTO dto, @RequestParam("file") MultipartFile file){
         return espacioService.save(dto, file);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Object> update(@ModelAttribute EspaciosDTO dto, @RequestParam("file") MultipartFile file){
+        return espacioService.update(dto, file);
     }
 
 

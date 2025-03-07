@@ -8,9 +8,9 @@ public class EdificioDTO {
     //Atributos
     @NotNull(groups = {EdificioDTO.Modify.class, EdificioDTO.ChangeStatus.class}, message = "Es necesario el id")
     private Long id;
-    @NotBlank(groups = {EdificioDTO.Register.class, EdificioDTO.Modify.class}, message = "El nombre no puede quedar vacío")
+    @NotBlank(groups = {EdificioDTO.Register.class}, message = "El nombre no puede quedar vacío")
     private String nombre;
-    @NotNull(groups = {EdificioDTO.Register.class, EdificioDTO.Modify.class}, message ="Es nesesario el numero de pisos")
+    @NotNull(groups = {EdificioDTO.Register.class}, message ="Es nesesario el numero de pisos")
     private Integer numeroPisos;
 
     //Constructores

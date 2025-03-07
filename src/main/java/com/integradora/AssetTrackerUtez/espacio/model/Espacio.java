@@ -14,7 +14,6 @@ import java.util.List;
 @Entity
 @Table(name = "espacios")
 public class Espacio {
-
     //id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +29,8 @@ public class Espacio {
     private String urlImagen;
     @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
     private boolean status = true;
+    @Column(name = "publicid", columnDefinition = "VARCHAR(255)")
+    private String publicId;
 
 
 
@@ -52,11 +53,20 @@ public class Espacio {
     public Espacio() {
     }
 
-    public Espacio(String nombre, Integer numeroPlanta, String urlImagen, boolean status) {
+    public Espacio(String nombre, Integer numeroPlanta, String urlImagen,String publicId, boolean status) {
         this.nombre = nombre;
         this.numeroPlanta = numeroPlanta;
         this.urlImagen = urlImagen;
         this.status = status;
+        this.publicId = publicId;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
     }
 
     public int getId() {

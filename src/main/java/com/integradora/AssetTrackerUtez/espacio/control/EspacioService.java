@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -49,9 +50,9 @@ public class EspacioService {
     public ResponseEntity<Object> findById(int id) {
         return new ResponseEntity<>(new Message(espacioRepository.findById((long) id), "Edificio encontrado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+
     @Transactional(rollbackFor ={SQLException.class})
     public ResponseEntity<Object> save(EspaciosDTO dto, MultipartFile file) {
-
         //validaciones
         //valida que el nombre no exista
         if(espacioRepository.existsByNombre(dto.getNombre())){
@@ -81,62 +82,70 @@ public class EspacioService {
         if (!file.getContentType().startsWith("image/")) {
             return new ResponseEntity<>(new Message(null, "El archivo debe ser una imagen (JPG, PNG, etc.)", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
-
-        //save
-        String imageUrl = cloudinaryService.uploadFile(file);
-        //pone la primera letra en mayuscula
-        dto.setNombre(capitalizarPrimeraLetra(dto.getNombre()));
-        //quita los espacios al inicio y al final
-        dto.setNombre(dto.getNombre().trim());
-        Espacio espacio = new Espacio(dto.getNombre(), dto.getNumeroPlanta(), imageUrl, true);
+        // Subir imagen a Cloudinary y obtener URL y Public ID
+        Map<String, String> uploadResult = cloudinaryService.uploadFile(file);
+        String imageUrl = uploadResult.get("url");
+        String publicId = uploadResult.get("public_id");
+        // Formatear nombre
+        dto.setNombre(capitalizarPrimeraLetra(dto.getNombre().trim()));
+        // Crear y guardar el objeto Espacio con Public ID
+        Espacio espacio = new Espacio(dto.getNombre(), dto.getNumeroPlanta(), imageUrl, publicId, true);
         espacio = espacioRepository.saveAndFlush(espacio);
         if(espacio == null){
-            return new ResponseEntity<>(new Message(espacio, "Error al regitrar el espacio", TypesResponse.SUCCESS), HttpStatus.OK);
+            return new ResponseEntity<>(new Message(espacio, "Error al registrar el espacio", TypesResponse.ERROR), HttpStatus.OK);
         }
         return new ResponseEntity<>(new Message(espacio, "Espacio registrado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
-    @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<Object> update( EspaciosDTO dto, MultipartFile file) {
 
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<Object> update(EspaciosDTO dto, MultipartFile file) {
         // Buscar el espacio en la base de datos
         Optional<Espacio> optionalEspacio = espacioRepository.findById((long) dto.getId());
         if (optionalEspacio.isEmpty()) {
             return new ResponseEntity<>(new Message(null, "El espacio no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
-
         Espacio espacio = optionalEspacio.get();
 
-        // Validar si el nuevo nombre ya existe en otro espacio
-        if (espacioRepository.existsByNombre(dto.getNombre()) && !espacio.getNombre().equalsIgnoreCase(dto.getNombre())) {
-            return new ResponseEntity<>(new Message(null, "El nombre del espacio ya está en uso", TypesResponse.ERROR), HttpStatus.CONFLICT);
+        // Validar y actualizar el nombre si se envía
+        if (dto.getNombre() != null && !dto.getNombre().isBlank()) {
+            String nuevoNombre = dto.getNombre().trim();
+            if (nuevoNombre.length() > 50 || nuevoNombre.length() < 3) {
+                return new ResponseEntity<>(new Message(null, "El nombre debe tener entre 3 y 50 caracteres", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+            }
+            if (!nuevoNombre.matches("^[a-zA-Z0-9 ]*$")) {
+                return new ResponseEntity<>(new Message(null, "El nombre solo puede contener letras y números", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            if (espacioRepository.existsByNombre(nuevoNombre) && !espacio.getNombre().equalsIgnoreCase(nuevoNombre)) {
+                return new ResponseEntity<>(new Message(null, "El nombre del espacio ya está en uso", TypesResponse.ERROR), HttpStatus.CONFLICT);
+            }
+            espacio.setNombre(capitalizarPrimeraLetra(nuevoNombre));
         }
 
-        // Validaciones del nombre
-        if (dto.getNombre().length() > 50 || dto.getNombre().length() < 3) {
-            return new ResponseEntity<>(new Message(null, "El nombre debe tener entre 3 y 50 caracteres", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        // Validar y actualizar el número de planta si se envía
+        if (dto.getNumeroPlanta() != null) {
+            if (dto.getNumeroPlanta() < 1) {
+                return new ResponseEntity<>(new Message(null, "El número de planta debe ser mayor a 0", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+            }
+            espacio.setNumeroPlanta(dto.getNumeroPlanta());
         }
-        if (!dto.getNombre().matches("^[a-zA-Z0-9 ]*$")) {
-            return new ResponseEntity<>(new Message(null, "El nombre solo puede contener letras y números", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
-        }
-        // Validación del número de planta
-        if (dto.getNumeroPlanta() < 1) {
-            return new ResponseEntity<>(new Message(null, "El número de planta debe ser mayor a 0", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
-        }
+
         // Si hay un nuevo archivo, validamos y subimos la nueva imagen
-        String imageUrl = espacio.getUrlImagen(); // Mantener la imagen existente
         if (file != null && !file.isEmpty()) {
             if (!file.getContentType().startsWith("image/")) {
                 return new ResponseEntity<>(new Message(null, "El archivo debe ser una imagen (JPG, PNG, etc.)", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
             }
-            imageUrl = cloudinaryService.uploadFile(file); // Subir nueva imagen
+
+            // Obtener el publicId actual o generar uno nuevo si no existe
+            String publicId = espacio.getPublicId() != null ? espacio.getPublicId() : "espacios/" + dto.getId();
+
+            // Subir la imagen y obtener el resultado (URL y public_id actualizado)
+            Map<String, String> uploadResult = cloudinaryService.updateFile(file, publicId);
+
+            // Guardar los nuevos valores en el objeto
+            espacio.setUrlImagen(uploadResult.get("url"));
+            espacio.setPublicId(uploadResult.get("public_id"));
         }
-        // Quitar espacios al inicio y al final, y capitalizar el nombre
-        dto.setNombre(capitalizarPrimeraLetra(dto.getNombre().trim()));
-        // Actualizar los datos del espacio
-        espacio.setNombre(dto.getNombre());
-        espacio.setNumeroPlanta(dto.getNumeroPlanta());
-        espacio.setUrlImagen(imageUrl); // Actualizar imagen solo si se proporcionó una nueva
 
         // Guardar cambios
         espacio = espacioRepository.saveAndFlush(espacio);
