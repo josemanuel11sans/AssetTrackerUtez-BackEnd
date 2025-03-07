@@ -1,8 +1,13 @@
 package com.integradora.AssetTrackerUtez.espacio.control;
 
 import com.integradora.AssetTrackerUtez.espacio.model.EspaciosDTO;
+import com.integradora.AssetTrackerUtez.utils.Message;
+import com.integradora.AssetTrackerUtez.utils.TypesResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,11 +50,23 @@ public class EspacioController {
     public ResponseEntity<Object> save(@ModelAttribute EspaciosDTO dto, @RequestParam("file") MultipartFile file){
         return espacioService.save(dto, file);
     }
-
+/*
     @PutMapping("/update")
     public ResponseEntity<Object> update(@ModelAttribute EspaciosDTO dto, @RequestParam("file") MultipartFile file){
         return espacioService.update(dto, file);
     }
+*/
+    @PutMapping("/update")
+    public ResponseEntity<Object> update(@Valid @ModelAttribute EspaciosDTO dto,
+                                         @RequestParam(value = "file", required = false) MultipartFile file,
+                                         BindingResult bindingResult) {
+        // Si hay errores de validación, devolverlos
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(new Message(null, "Errores de validación", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }
+        return espacioService.update(dto, file);
+    }
+
 
 
 

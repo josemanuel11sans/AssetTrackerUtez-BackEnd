@@ -12,11 +12,11 @@ public class EspaciosDTO {
 
     @NotBlank(groups = {Modify.class, Register.class}, message = "Es necesario el numero de planta")
     private Integer numeroPlanta;
-
-    @NotBlank(groups = {Modify.class, Register.class}, message = "Es necesario la url de la imagen")
+    //la validacion solo funciona al registar un nuevo espacio
+    @NotBlank(groups = { Register.class}, message = "Es necesario la url de la imagen")
     private String urlImagen;
 
-    @NotBlank(groups = {Modify.class, Register.class}, message = "Es necesario el public id de la imagen")
+    @NotBlank(groups = { Register.class}, message = "Es necesario el public id de la imagen")
     private String publicId;
 
     public int getId() {

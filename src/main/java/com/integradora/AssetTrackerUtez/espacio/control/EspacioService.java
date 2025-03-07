@@ -50,7 +50,6 @@ public class EspacioService {
     public ResponseEntity<Object> findById(int id) {
         return new ResponseEntity<>(new Message(espacioRepository.findById((long) id), "Edificio encontrado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
     @Transactional(rollbackFor ={SQLException.class})
     public ResponseEntity<Object> save(EspaciosDTO dto, MultipartFile file) {
         //validaciones
@@ -96,7 +95,6 @@ public class EspacioService {
         }
         return new ResponseEntity<>(new Message(espacio, "Espacio registrado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
 
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> update(EspaciosDTO dto, MultipartFile file) {
@@ -152,6 +150,7 @@ public class EspacioService {
 
         return new ResponseEntity<>(new Message(espacio, "Espacio actualizado correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+
 
 
 
