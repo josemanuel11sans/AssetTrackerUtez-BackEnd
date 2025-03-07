@@ -12,18 +12,19 @@ import java.util.List;
 @Entity
 @Table(name = "categoriasEspacio")
 public class CategoriaEspacio {
+    // id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    // nombre
     @NotBlank(message = "El nombre es obligatorio")
     @Column(name = "nombre", columnDefinition = "VARCHAR(100)")
     private String nombre;
-
+    // descripcion
     @NotBlank(message = "La descripción es obligatoria")
     @Column(name = "descripcion", columnDefinition = "VARCHAR(255)")
     private String descripcion;
-
+    // estado
     @Column(name = "estado", columnDefinition = "BOOL DEFAULT TRUE")
     private boolean estado = true;
 

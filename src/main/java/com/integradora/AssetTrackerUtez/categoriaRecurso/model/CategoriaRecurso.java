@@ -10,19 +10,24 @@ import java.util.List;
 @Entity
 @Table(name = "categoriasRecurso")
 public class CategoriaRecurso {
+    //id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    //nombre
     @NotBlank(message = "El nombre es obligatorio")
     @Column(name = "nombre", columnDefinition = "VARCHAR(100)")
     private String nombre;
-
+    //material
     @NotBlank(message = "El material es obligatorio")
     @Column(name = "material", columnDefinition = "VARCHAR(255)")
     private String material;
-
-    // FALTA IMAGEN
+    //imagenUrl
+    @Column(name = "imagenurl", columnDefinition = "VARCHAR(255)")
+    private String imagenUrl;
+    //publicId
+    @Column(name = "publicid", columnDefinition = "VARCHAR(255)")
+    private String publicId;
 
     @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
     private boolean status = true;
@@ -38,6 +43,14 @@ public class CategoriaRecurso {
     private List<Recurso> recursos;
 
     public CategoriaRecurso() {
+    }
+
+    public CategoriaRecurso(String nombre, String material, String imagenUrl, String publicId, boolean status) {
+        this.nombre = nombre;
+        this.material = material;
+        this.imagenUrl = imagenUrl;
+        this.publicId = publicId;
+        this.status = status;
     }
 
     public String getNombre() {
