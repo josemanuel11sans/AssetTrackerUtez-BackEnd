@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,7 +38,11 @@ public class EspacioController {
     public ResponseEntity<Object> findById(@PathVariable int id) {
         return espacioService.findById(id);
     }
-
+    //vambiar status
+    @PutMapping("/changeStatus")
+    public ResponseEntity<Object> cambierStatus(@Validated(EspaciosDTO.ChangeStatus.class) @RequestBody EspaciosDTO dto){
+        return espacioService.changeStatus(dto);
+    }
     //guardar datos
     /**
      * e a la pestaña "Body", selecciona "form-data" y agrega los siguientes campos:
@@ -50,12 +55,6 @@ public class EspacioController {
     public ResponseEntity<Object> save(@ModelAttribute EspaciosDTO dto, @RequestParam("file") MultipartFile file){
         return espacioService.save(dto, file);
     }
-/*
-    @PutMapping("/update")
-    public ResponseEntity<Object> update(@ModelAttribute EspaciosDTO dto, @RequestParam("file") MultipartFile file){
-        return espacioService.update(dto, file);
-    }
-*/
     @PutMapping("/update")
     public ResponseEntity<Object> update(@Valid @ModelAttribute EspaciosDTO dto,
                                          @RequestParam(value = "file", required = false) MultipartFile file,
@@ -66,8 +65,4 @@ public class EspacioController {
         }
         return espacioService.update(dto, file);
     }
-
-
-
-
 }

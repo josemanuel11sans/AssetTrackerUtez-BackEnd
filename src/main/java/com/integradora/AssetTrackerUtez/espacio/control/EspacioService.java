@@ -23,7 +23,6 @@ import java.util.Optional;
 public class EspacioService {
     @Autowired
     private CloudinaryService cloudinaryService;
-
     private final EspacioRepository espacioRepository;
     @Autowired
     public EspacioService(EspacioRepository espacioRepository) {
@@ -95,7 +94,6 @@ public class EspacioService {
         }
         return new ResponseEntity<>(new Message(espacio, "Espacio registrado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> update(EspaciosDTO dto, MultipartFile file) {
         // Buscar el espacio en la base de datos
@@ -104,7 +102,6 @@ public class EspacioService {
             return new ResponseEntity<>(new Message(null, "El espacio no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
         Espacio espacio = optionalEspacio.get();
-
         // Validar y actualizar el nombre si se envía
         if (dto.getNombre() != null && !dto.getNombre().isBlank()) {
             String nuevoNombre = dto.getNombre().trim();
@@ -119,7 +116,6 @@ public class EspacioService {
             }
             espacio.setNombre(capitalizarPrimeraLetra(nuevoNombre));
         }
-
         // Validar y actualizar el número de planta si se envía
         if (dto.getNumeroPlanta() != null) {
             if (dto.getNumeroPlanta() < 1) {
@@ -127,7 +123,6 @@ public class EspacioService {
             }
             espacio.setNumeroPlanta(dto.getNumeroPlanta());
         }
-
         // Si hay un nuevo archivo, validamos y subimos la nueva imagen
         if (file != null && !file.isEmpty()) {
             if (!file.getContentType().startsWith("image/")) {
@@ -144,16 +139,25 @@ public class EspacioService {
             espacio.setUrlImagen(uploadResult.get("url"));
             espacio.setPublicId(uploadResult.get("public_id"));
         }
-
         // Guardar cambios
         espacio = espacioRepository.saveAndFlush(espacio);
-
         return new ResponseEntity<>(new Message(espacio, "Espacio actualizado correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
-
-
-
+    //Cambiar estado del espacio
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<Object> changeStatus(EspaciosDTO dto) {
+        Optional<Espacio> optional = espacioRepository.findById((long) dto.getId());
+        if (optional.isEmpty()) {
+            return new ResponseEntity<>(new Message(null, "Espacio no encontrado", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
+        }
+        Espacio espacio = optional.get();
+        espacio.setStatus(!espacio.isStatus());
+        espacio = espacioRepository.saveAndFlush(espacio);
+        if (espacio == null) {
+            return new ResponseEntity<>(new Message(null, "Error al cambiar estado del espacio", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(new Message(espacio, "Estado del espacio actualizado", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
 
     //funcion para capitalizar la primera letra de un texto
     public static String capitalizarPrimeraLetra(String texto) {

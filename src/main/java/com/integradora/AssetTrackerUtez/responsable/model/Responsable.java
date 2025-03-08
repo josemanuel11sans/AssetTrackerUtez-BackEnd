@@ -52,6 +52,11 @@ public class Responsable {
         this.fechaCreacion = fechaCreacion;
         this.ultimaActualizacion = ultimaActualizacion;
     }
+    public  Responsable(String nombre, String divisionAcademica, Boolean estado){
+        this.nombre = nombre;
+        this.divisionAcademica = divisionAcademica;
+        this.estado = estado;
+    }
 
     public String getNombre() {
         return nombre;

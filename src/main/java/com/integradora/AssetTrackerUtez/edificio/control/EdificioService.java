@@ -21,32 +21,26 @@ import java.util.Optional;
 public class EdificioService {
     //Logger
     private static final Logger loger = LoggerFactory.getLogger(EdificioService.class);
-
     private final EdificioRepository edificioRepository;
-
     @Autowired
     public EdificioService(EdificioRepository edificioRepository) {
         this.edificioRepository = edificioRepository;
     }
-
     //Trear todos los edificios
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findAll() {
         return new ResponseEntity<>(new Message(edificioRepository.findAll(), "Listado de edificios ", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
     //Trear solo los edificios activos
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findAllEnable() {
         return new ResponseEntity<>(new Message(edificioRepository.findAllByStatusOrderByNombreAsc(true), "Listado de edificios activos", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
     //Trear solo los edificios inactivos
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findAllDisable() {
         return new ResponseEntity<>(new Message(edificioRepository.findAllByStatusOrderByNombreAsc(false), "Listado de edificios inactivos", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
     //Cambiar estado de un edificio
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> changeStatus(EdificioDTO dto){
@@ -62,7 +56,6 @@ public class EdificioService {
         }
         return new ResponseEntity<>(new Message(edificio, "Edificio actualizado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
     //Guardar un edificio
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> GuardarEdificio(EdificioDTO dto){
@@ -97,7 +90,6 @@ public class EdificioService {
         }
         return new ResponseEntity<>(new Message(edificio, "Edificio guardado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
     //actualizar un edificio
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> actualizarEdificio(EdificioDTO dto) {
@@ -144,7 +136,6 @@ public class EdificioService {
 
         return new ResponseEntity<>(new Message(edificio, "Edificio actualizado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
     //funcion para capitalizar la primera letra de un texto
     public static String capitalizarPrimeraLetra(String texto) {
         texto = texto.toLowerCase();

@@ -62,7 +62,7 @@ public class ResponsableService {
         if (dto.getDivisionAcademica().length() > 100) {
             return new ResponseEntity<>(new Message("La división acdémica excede el número de caracteres permitidos", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-        Responsable responsable = new Responsable(dto.getNombre(), dto.getDivisionAcademica(), true, dto.getFechaCreacion(),dto.getUltimaActualizacion());
+        Responsable responsable = new Responsable(dto.getNombre(), dto.getDivisionAcademica(), true);
         responsable = responsableRepository.saveAndFlush(responsable);
 
         if(responsable == null) {
