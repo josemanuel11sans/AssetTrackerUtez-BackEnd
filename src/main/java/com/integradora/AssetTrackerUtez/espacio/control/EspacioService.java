@@ -32,21 +32,24 @@ public class EspacioService {
     //Método para buscar todos los espacios habilitados
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findAllEnable() {
-        return new ResponseEntity<>(new Message(espacioRepository.findAllByStatusOrderByNombre(true), "Listado de edificios", TypesResponse.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(espacioRepository.findAllByStatusOrderByNombre(true), "Listado de espacios activos", TypesResponse.SUCCESS), HttpStatus.OK);
     }
     //Método para buscar todos los espacios deshabilitados
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findAllDisable() {
-        return new ResponseEntity<>(new Message(espacioRepository.findAllByStatusOrderByNombre(false), "Listado de edificios", TypesResponse.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(espacioRepository.findAllByStatusOrderByNombre(false), "Listado de espacios inactivos", TypesResponse.SUCCESS), HttpStatus.OK);
     }
     //Método para buscar todos los espacios
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findAll() {
-        return new ResponseEntity<>(new Message(espacioRepository.findAll(), "Listado de edificios", TypesResponse.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(espacioRepository.findAll(), "Listado de espacios", TypesResponse.SUCCESS), HttpStatus.OK);
     }
     //Método para buscar un espacio por id
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findById(int id) {
+        if (!espacioRepository.existsById((long) id)){
+            return new ResponseEntity<>(new Message(null, "Edificio no encontrado", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(new Message(espacioRepository.findById((long) id), "Edificio encontrado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
     @Transactional(rollbackFor ={SQLException.class})
@@ -158,7 +161,6 @@ public class EspacioService {
         }
         return new ResponseEntity<>(new Message(espacio, "Estado del espacio actualizado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
     //funcion para capitalizar la primera letra de un texto
     public static String capitalizarPrimeraLetra(String texto) {
         texto = texto.toLowerCase();

@@ -44,7 +44,7 @@ public class Espacio {
     private Edificio edificio;
     //varios espacios pueden pertenecer a una categoria
     @ManyToOne
-    //@JsonIgnore
+    @JsonIgnore
     private CategoriaEspacio categoriaEspacio;
     //un espacio puede tener varios inventarios levantados
     @OneToMany (mappedBy = "espacio")
