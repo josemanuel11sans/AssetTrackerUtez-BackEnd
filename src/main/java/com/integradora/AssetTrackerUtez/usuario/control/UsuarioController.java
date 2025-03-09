@@ -4,6 +4,7 @@ import com.integradora.AssetTrackerUtez.usuario.model.UsuarioDto;
 import com.integradora.AssetTrackerUtez.utils.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -47,5 +48,21 @@ public class UsuarioController {
     @PostMapping("/delete")
     public ResponseEntity<Message> delete(@RequestBody UsuarioDto usuarioDto){
         return usuarioService.delete(usuarioDto);
+    }
+    @PostMapping("/verify-code")
+    public ResponseEntity<Object> verifyCode(@Validated({UsuarioDto.VerifyCode.class}) @RequestBody UsuarioDto dto){
+        return usuarioService.verifyCode(dto);
+    }
+    @PostMapping("/verify-password")
+    public ResponseEntity<Message> verifyPassword(@RequestBody UsuarioDto usuarioDto) {
+        return usuarioService.verifyPassword(usuarioDto);
+    }
+    @PutMapping("/change-password")
+    public ResponseEntity<Message> changePassword(@RequestBody UsuarioDto usuarioDto){
+        return usuarioService.cambiarContra(usuarioDto);
+    }
+    @PutMapping("/change-password-gral")
+    public ResponseEntity<Message> changePasswordUser(@RequestBody UsuarioDto usuarioDto){
+        return usuarioService.cambiarContraGral(usuarioDto);
     }
 }

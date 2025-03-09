@@ -173,4 +173,69 @@ public class UsuarioService {
         logger.info("Lista de usuarios activos");
         return new ResponseEntity<>(new Message(respuestas, "Usuarios con status activo", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+
+    //Para cambio de contraseña
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<Message> cambiarContra(UsuarioDto dto){
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(dto.getId());
+        System.out.println(dto.getId());
+        if (!usuarioOptional.isPresent()) {
+            return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
+        }
+        Usuario usuario = usuarioOptional.get();
+        /* Validar la contraseña actual
+        if (!passwordEncoder.matches(dto.getContrasena(), usuario.getContrasena())) {
+            return new ResponseEntity<>(new Message("La contraseña actual es incorrecta", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }*/
+
+        //usuario.setContrasena(passwordEncoder.encode(dto.getContrasena()));
+        usuario.setContrasena(dto.getContrasena());
+        usuario = usuarioRepository.saveAndFlush(usuario);
+        if (usuario == null) {
+            return new ResponseEntity<>(new Message("La contraseña del usuario no se actualizó", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }
+        logger.info("La contraseña se actualizó correctamente");
+        return new ResponseEntity<>(new Message(usuario, "Contraseña del usuario actualizada correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<Message> cambiarContraGral(UsuarioDto dto){
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(dto.getId());
+        if (!usuarioOptional.isPresent()) {
+            return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
+        }
+        Usuario usuario = usuarioOptional.get();
+        //usuario.setContrasena(passwordEncoder.encode(dto.getContrasena()));
+        usuario.setContrasena(dto.getContrasena());
+        usuario = usuarioRepository.saveAndFlush(usuario);
+        if (usuario == null) {
+            return new ResponseEntity<>(new Message("La contraseña del usuario no se actualizó", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }
+        logger.info("La contraseña se actualizó correctamente");
+        return new ResponseEntity<>(new Message(usuario, "Contraseña del usuario actualizada correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> verifyCode(UsuarioDto dto) {
+        Optional<Usuario> optional = usuarioRepository.findFirstByCorreoAndCodigo(dto.getCorreo(),dto.getCode());
+
+        if(!optional.isPresent()){
+            return new ResponseEntity<>(new Message("No se pudo verificar", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+        logger.info("El código se ha verificado");
+        return new ResponseEntity<>(new Message("Verificado", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
+    public ResponseEntity<Message> verifyPassword(UsuarioDto dto) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(dto.getId());
+        if (!usuarioOptional.isPresent()) {
+            return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
+        }
+        Usuario usuario = usuarioOptional.get();
+
+        //if (!passwordEncoder.matches(dto.getContrasena(), usuario.getContrasena())) {
+        if ((dto.getContrasena() == usuario.getContrasena())){
+            return new ResponseEntity<>(new Message("La contraseña actual es incorrecta", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(new Message("La contraseña actual es correcta", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
 }
