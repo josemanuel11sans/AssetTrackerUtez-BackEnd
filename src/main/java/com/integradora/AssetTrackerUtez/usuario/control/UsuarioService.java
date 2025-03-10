@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,12 +33,12 @@ public class UsuarioService {
     private final NotificacionRegistroRepository notificacionRegistroRepository;
     private final  NotificacionRegistroService notificacionRegistroService;
 
-    //private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository, RolRepository rolRepository/*, PasswordEncoder passwordEncoder*/, NotificacionRegistroRepository notificacionRegistroRepository, NotificacionRegistroService notificacionRegistroService) {
+    public UsuarioService(UsuarioRepository usuarioRepository, RolRepository rolRepository, PasswordEncoder passwordEncoder, NotificacionRegistroRepository notificacionRegistroRepository, NotificacionRegistroService notificacionRegistroService) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
-        /*this.passwordEncoder = passwordEncoder;*/
+        this.passwordEncoder = passwordEncoder;
         this.notificacionRegistroRepository = notificacionRegistroRepository;
         this.notificacionRegistroService = notificacionRegistroService;
     }
@@ -183,13 +184,13 @@ public class UsuarioService {
             return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
         Usuario usuario = usuarioOptional.get();
-        /* Validar la contraseña actual
+        //Validar la contraseña actual
         if (!passwordEncoder.matches(dto.getContrasena(), usuario.getContrasena())) {
             return new ResponseEntity<>(new Message("La contraseña actual es incorrecta", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
-        }*/
+        }
 
-        //usuario.setContrasena(passwordEncoder.encode(dto.getContrasena()));
-        usuario.setContrasena(dto.getContrasena());
+        usuario.setContrasena(passwordEncoder.encode(dto.getContrasena()));
+        //usuario.setContrasena(dto.getContrasena());
         usuario = usuarioRepository.saveAndFlush(usuario);
         if (usuario == null) {
             return new ResponseEntity<>(new Message("La contraseña del usuario no se actualizó", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
@@ -204,8 +205,8 @@ public class UsuarioService {
             return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
         Usuario usuario = usuarioOptional.get();
-        //usuario.setContrasena(passwordEncoder.encode(dto.getContrasena()));
-        usuario.setContrasena(dto.getContrasena());
+        usuario.setContrasena(passwordEncoder.encode(dto.getContrasena()));
+        //usuario.setContrasena(dto.getContrasena());
         usuario = usuarioRepository.saveAndFlush(usuario);
         if (usuario == null) {
             return new ResponseEntity<>(new Message("La contraseña del usuario no se actualizó", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
@@ -230,9 +231,9 @@ public class UsuarioService {
             return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
         Usuario usuario = usuarioOptional.get();
+        //if ((dto.getContrasena() == usuario.getContrasena())){
+        if (!passwordEncoder.matches(dto.getContrasena(), usuario.getContrasena())) {
 
-        //if (!passwordEncoder.matches(dto.getContrasena(), usuario.getContrasena())) {
-        if ((dto.getContrasena() == usuario.getContrasena())){
             return new ResponseEntity<>(new Message("La contraseña actual es incorrecta", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
 
