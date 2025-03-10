@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/recursos")
@@ -22,7 +23,7 @@ public class RecursosController {
         return recursosService.finfAll();
     }
     @PostMapping("/save")
-    public  ResponseEntity<Object> save(@Validated(RecursosDTO.Register.class) @RequestBody RecursosDTO dto){
-        return  recursosService.save(dto);
+    public  ResponseEntity<Object> save(@Validated(RecursosDTO.Register.class) @ModelAttribute RecursosDTO dto, @RequestParam(value = "file", required = false) MultipartFile file){
+        return  recursosService.save(dto,file);
     }
 }

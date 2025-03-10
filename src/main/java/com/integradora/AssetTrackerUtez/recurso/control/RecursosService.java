@@ -21,8 +21,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -48,51 +50,110 @@ public class RecursosService {
     }
 
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<Object> save(RecursosDTO dto){
-        //validacion de codigo
-        //validaciones de descripcion
-        //validaciones de marca
-        //validaciones de modelo
-        //validaciones de numSerie
-        //validaciones de Observaciones
-        //validacion del id del inventario al que pertenece
-        if(!String.valueOf(dto.getInvetariolevantadoid()).matches("^-?\\d+$")){return new ResponseEntity<>(new Message("El recurso que ser un id entero", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);}
-        //validacion del id de la categoria de recurso a la que pertenece
-        if(!String.valueOf(dto.getCategoriaRecursoid()).matches("^-?\\d+$")){return new ResponseEntity<>(new Message("La categoria que ser un id entero", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);}
-        //validacion del id del el responsable al que le pertenece el recurso
-        if(!String.valueOf(dto.getResponsableid()).matches("^-?\\d+$")){return new ResponseEntity<>(new Message("El responsable que ser un id entero", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);}
+    public ResponseEntity<Object> save(RecursosDTO dto, MultipartFile file){
+        // Validación de descripción
+        if(dto.getDescripcion() != null) {
+            if(dto.getDescripcion().length() < 3){
+                return new ResponseEntity<>(new Message("La descripcion no puede tener menos de 3 caracteres ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            } else if (dto.getDescripcion().length() > 255){
+                return new ResponseEntity<>(new Message("La descripcion no puede tener más de 255 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+        }
 
+        // Validación de marca
+        if(dto.getMarca() != null) {
+            if(dto.getMarca().length() < 3){
+                return new ResponseEntity<>(new Message("La marca no puede tener menos de 3 caracteres ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            } else if (dto.getMarca().length() > 255){
+                return new ResponseEntity<>(new Message("La marca no puede tener más de 255 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+        }
 
-        logger.info(dto.getInvetariolevantadoid() + "si existe la maldita categoria");
+        // Validación de modelo
+        if(dto.getModelo() != null) {
+            if(dto.getModelo().length() < 1){
+                return new ResponseEntity<>(new Message("El modelo no puede tener menos de 1 carácter ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            } else if (dto.getModelo().length() > 255){
+                return new ResponseEntity<>(new Message("El modelo no puede tener más de 255 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+        }
 
+        // Validación de número de serie
+        if(dto.getNumeroSerie() != null) {
+            if(dto.getNumeroSerie().length() < 3){
+                return new ResponseEntity<>(new Message("El número de serie no puede tener menos de 3 caracteres ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            } else if (dto.getNumeroSerie().length() > 255){
+                return new ResponseEntity<>(new Message("El número de serie no puede tener más de 255 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        // Validación de observaciones
+        if(dto.getObservaciones() != null) {
+            if(dto.getObservaciones().length() < 3){
+                return new ResponseEntity<>(new Message("Las observaciones no pueden tener menos de 3 caracteres ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            } else if (dto.getObservaciones().length() > 255){
+                return new ResponseEntity<>(new Message("Las observaciones no pueden tener más de 255 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        // Validación de IDs
+        if(!String.valueOf(dto.getInvetariolevantadoid()).matches("^-?\\d+$")){
+            return new ResponseEntity<>(new Message("El recurso debe tener un ID de inventario válido", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+        if(!String.valueOf(dto.getCategoriaRecursoid()).matches("^-?\\d+$")){
+            return new ResponseEntity<>(new Message("La categoría debe tener un ID de categoría válido", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+        if(!String.valueOf(dto.getResponsableid()).matches("^-?\\d+$")){
+            return new ResponseEntity<>(new Message("El responsable debe tener un ID de responsable válido", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        // Búsqueda de entidad relacionada
         InventarioLevantado inventarioLevantado = inventarioLevantadoRepository.findById((long)dto.getInvetariolevantadoid()).orElse(null);
         CategoriaRecurso categoriaRecurso = categoriaRecursoRepository.findById( (long)dto.getCategoriaRecursoid()).orElse(null);
         Responsable responsable = responsableRepository.findById( (long)dto.getResponsableid()).orElse(null);
 
+        // Validación de existencia de las entidades relacionadas
+        if (inventarioLevantado == null){
+            return new ResponseEntity<>(new Message("El inventario no existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+        if (categoriaRecurso == null){
+            return new ResponseEntity<>(new Message("La categoría no existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+        if (responsable == null){
+            return new ResponseEntity<>(new Message("El responsable no existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
 
-        if (inventarioLevantado == null){return new ResponseEntity<>(new Message("El invenntario no existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);}
-        if (categoriaRecurso == null){return new ResponseEntity<>(new Message("La categoria no existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);}
-        if (responsable == null){return new ResponseEntity<>(new Message("El responsable no existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);}
-        //Creamos un nuevo recurso
+        Map<String, String> uploadResult =  cloudinaryService.uploadFile(file);
+        String imagenUrl = uploadResult.get("url");
+        String publicId = uploadResult.get("public_id");
+
+
+
+        // Creación del nuevo recurso
         Recurso recurso = new Recurso(
                 dto.getCodigo(),
-                dto.getDescripcion(),
-                dto.getMarca(),
-                dto.getModelo(),
-                dto.getNumeroSerie(),
-                dto.getObservaciones(),
+                dto.getDescripcion() != null ? dto.getDescripcion() : null,  // Si no se pasa, se asigna null
+                dto.getMarca() != null ? dto.getMarca() : null,  // Si no se pasa, se asigna null
+                dto.getModelo() != null ? dto.getModelo() : null,  // Si no se pasa, se asigna null
+                dto.getNumeroSerie() != null ? dto.getNumeroSerie() : null,  // Si no se pasa, se asigna null
+                dto.getObservaciones() != null ? dto.getObservaciones() : null,  // Si no se pasa, se asigna null
                 true,
                 inventarioLevantado,
                 categoriaRecurso,
-                responsable
+                responsable,
+                publicId,
+                imagenUrl
         );
+
+        // Guardar el recurso
         recurso = recursosRepository.saveAndFlush(recurso);
-        if ( recurso == null){
-            return new ResponseEntity<>(new Message("Erro al guardar el recurso: ", TypesResponse.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        if (recurso == null){
+            return new ResponseEntity<>(new Message("Error al guardar el recurso", TypesResponse.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(new Message(recurso,"Recurso guardado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+
 
 
 }

@@ -18,6 +18,7 @@ public class RecursosDTO {
     private String numeroSerie;
     //puede o no puede esatr
     private String observaciones;
+    
     @NotNull(groups = {RecursosDTO.Modify.class, RecursosDTO.Register.class}, message = "Es necesario asignar el inventario al que pertenece")
     private int invetariolevantadoid;
     @NotNull(groups = {RecursosDTO.Modify.class, RecursosDTO.Register.class}, message = "Es necesario asignar una categoria")
