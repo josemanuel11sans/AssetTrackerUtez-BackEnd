@@ -1,5 +1,6 @@
 package com.integradora.AssetTrackerUtez.usuario.model;
 
+import com.integradora.AssetTrackerUtez.edificio.model.Edificio;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

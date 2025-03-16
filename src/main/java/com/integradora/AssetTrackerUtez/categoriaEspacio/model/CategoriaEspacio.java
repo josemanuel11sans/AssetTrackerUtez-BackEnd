@@ -3,6 +3,8 @@ package com.integradora.AssetTrackerUtez.categoriaEspacio.model;
 import com.integradora.AssetTrackerUtez.espacio.model.Espacio;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 import java.util.List;
@@ -10,27 +12,32 @@ import java.util.List;
 @Entity
 @Table(name = "categoriasEspacio")
 public class CategoriaEspacio {
+    // id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    // nombre
     @NotBlank(message = "El nombre es obligatorio")
     @Column(name = "nombre", columnDefinition = "VARCHAR(100)")
     private String nombre;
-
+    // descripcion
     @NotBlank(message = "La descripción es obligatoria")
     @Column(name = "descripcion", columnDefinition = "VARCHAR(255)")
     private String descripcion;
-
-    @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
-    private boolean status = true;
+    // estado
+    @Column(name = "estado", columnDefinition = "BOOL DEFAULT TRUE")
+    private boolean estado = true;
 
     //Este campo no tiene ni getter ni setter
-    @Column(name = "create_at",columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    @CreationTimestamp
+    @Column(name = "fechaCreacion",columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
 
-    // FALTA ÚLTIMA ACTUALIZACIÓN
+    @UpdateTimestamp
+    @Column(name = "ultimaActualizacion",columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ultimaActualizacion;
 
     @OneToMany (mappedBy = "categoriaEspacio")
     private List<Espacio> espacios;
@@ -38,10 +45,12 @@ public class CategoriaEspacio {
     public CategoriaEspacio() {
     }
 
-    public CategoriaEspacio(String nombre, String descripcion, boolean status) {
+    public CategoriaEspacio(String nombre, String descripcion, boolean estado, Date fechaCreacion, Date ultimaActualizacion) {
         this.nombre = nombre;
         this.descripcion = descripcion;
-        this.status = status;
+        this.estado = estado;
+        this.fechaCreacion = fechaCreacion;
+        this.ultimaActualizacion = ultimaActualizacion;
     }
 
     public String getNombre() {
@@ -52,12 +61,20 @@ public class CategoriaEspacio {
         this.nombre = nombre;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isEstado() {
+        return estado;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
+
+    public Date getUltimaActualizacion() {
+        return ultimaActualizacion;
+    }
+
+    public void setUltimaActualizacion(Date ultimaActualizacion) {
+        this.ultimaActualizacion = ultimaActualizacion;
     }
 
     public String getDescripcion() {
