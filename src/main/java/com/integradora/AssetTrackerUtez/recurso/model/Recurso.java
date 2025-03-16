@@ -1,6 +1,8 @@
 package com.integradora.AssetTrackerUtez.recurso.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.integradora.AssetTrackerUtez.categoriaRecurso.model.CategoriaRecurso;
 import com.integradora.AssetTrackerUtez.inventarioLevantado.model.InventarioLevantado;
 import com.integradora.AssetTrackerUtez.responsable.model.Responsable;
@@ -15,33 +17,38 @@ import java.util.List;
 public class Recurso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @Column(name = "codigo", columnDefinition = "VARCHAR(100)")
+    //@Column(name = "codigo", columnDefinition = "VARCHAR(100)")
     private String codigo;
 
-    @NotBlank(message = "La descripción es obligatoria")
-    @Column(name = "descripcion", columnDefinition = "VARCHAR(255)")
+    //@NotBlank(message = "La descripción es obligatoria")
+    @Column(name = "descripcion", columnDefinition = "VARCHAR(255)", nullable = true)
     private String descripcion;
 
-    @NotBlank(message = "La marca es obligatoria")
-    @Column(name = "marca", columnDefinition = "VARCHAR(100)")
+    //@NotBlank(message = "La marca es obligatoria")
+    @Column(name = "marca", columnDefinition = "VARCHAR(100)",nullable = true)
     private String marca;
 
-    @NotBlank(message = "El modelo es obligatorio")
-    @Column(name = "modelo", columnDefinition = "VARCHAR(100)")
+    //@NotBlank(message = "El modelo es obligatorio")
+    @Column(name = "modelo", columnDefinition = "VARCHAR(100)",nullable = true)
     private String modelo;
 
-    @NotBlank(message = "El número de serie es obligatorio")
-    @Column(name = "numeroSerie", columnDefinition = "VARCHAR(100)")
+    //@NotBlank(message = "El número de serie es obligatorio")
+    @Column(name = "numeroSerie", columnDefinition = "VARCHAR(100)",nullable = true)
     private String numeroSerie;
 
-    @NotBlank(message = "Las observaciones son obligatorias")
-    @Column(name = "observaciones", columnDefinition = "VARCHAR(255)")
+    //@NotBlank(message = "Las observaciones son obligatorias")
+    @Column(name = "observaciones", columnDefinition = "VARCHAR(255)",nullable = true)
     private String observaciones;
 
     @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
     private boolean status = true;
+
+    @Column(name = "urlImagen", columnDefinition = "VARCHAR(255)")
+    private String urlImagen;
+    @Column(name = "publicid", columnDefinition = "VARCHAR(255)")
+    private String publicId;
 
     //Este campo no tiene ni getter ni setter
     @Column(name = "create_at",columnDefinition = "TIMESTAMP DEFAULT NOW()")
@@ -53,17 +60,19 @@ public class Recurso {
     private InventarioLevantado inventarioLevantado;
 
     @ManyToOne
-    @JsonIgnore
+    @JsonManagedReference
     private CategoriaRecurso categoriaRecurso;
 
     @ManyToOne
-    @JsonIgnore
+    @JsonManagedReference
     private Responsable responsable;
 
     public Recurso() {
     }
 
-    public Recurso(String codigo, String descripcion, String marca, String modelo, String numeroSerie, String observaciones, boolean status) {
+
+
+    public Recurso(String codigo, String descripcion, String marca, String modelo, String numeroSerie, String observaciones, boolean status, InventarioLevantado inventarioLevantado, CategoriaRecurso categoriaRecurso, Responsable responsable, String urlImagen, String publicId) {
         this.codigo = codigo;
         this.descripcion = descripcion;
         this.marca = marca;
@@ -71,6 +80,11 @@ public class Recurso {
         this.numeroSerie = numeroSerie;
         this.observaciones = observaciones;
         this.status = status;
+        this.inventarioLevantado = inventarioLevantado;
+        this.categoriaRecurso = categoriaRecurso;
+        this.responsable = responsable;
+        this.publicId = publicId;
+        this.urlImagen = urlImagen;
     }
 
     public String getCodigo() {

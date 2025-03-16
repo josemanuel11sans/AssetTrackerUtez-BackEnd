@@ -19,6 +19,7 @@ public class AssetController {
     private AssetService assetService;
 
     // Crear un nuevo Asset
+    /*
     @PostMapping
     public Asset createAsset(
             @RequestParam String name,
@@ -26,7 +27,7 @@ public class AssetController {
             @RequestParam("file") MultipartFile file) {
         return assetService.createAsset(name, description, file);
     }
-
+*/
     // Obtener todos los Assets
     @GetMapping
     public List<Asset> getAllAssets() {
@@ -38,7 +39,7 @@ public class AssetController {
     public Optional<Asset> getAssetById(@PathVariable Long id) {
         return assetService.getAssetById(id);
     }
-
+    /*
     // Actualizar un Asset
     @PutMapping("/{id}")
     public Asset updateAsset(
@@ -48,7 +49,7 @@ public class AssetController {
             @RequestParam(value = "file", required = false) MultipartFile file) {
         return assetService.updateAsset(id, name, description, file);
     }
-
+    */
     // Eliminar un Asset
     @DeleteMapping("/{id}")
     public void deleteAsset(@PathVariable Long id) {
