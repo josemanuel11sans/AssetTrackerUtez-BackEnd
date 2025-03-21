@@ -32,17 +32,112 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(
+                        .requestMatchers(//todos (faltan)
                                 "/auth/login",
-                                "/register",
-                                "/usuarios/change-password",
-                                "/usuarios/send-email",
-                                "/usuarios/verify-code",
-                                "/usuarios/change-password",
-                                "/usuarios/verify-password",
-                                "/usuarios/change-password-gral"
-
+                                "/usuarios/save",
+                               // "/usuarios/change-password",
+                                "/usuarios/send-email"
+                                //"/usuarios/verify-code",
+                                //"/usuarios/change-password",
+                                //"/usuarios/verify-password",
+                                //"/usuarios/change-password-gral"
                         ).permitAll()
+                        .requestMatchers( //admin e inspector
+                                //usuarios
+                                "auth/login",
+                                "usuarios/{id}",
+                                "usuarios/verify-code",
+                                "usuarios/change-password",
+                                "usuarios/verify-password",
+                                "usuarios/change-password",
+                                "usuarios/change-password-gral",
+                                //responsables
+                                "responsables/actives",
+                                //recursos
+                                "recursos/all",
+                                "recursos/save",
+                                //inventario levantado
+                                "inventariosLevantados/all",
+                                "inventariosLevantados/all/enable",
+                                "inventariosLevantados/all/disable",
+                                "inventariosLevantados/save",
+                                "inventariosLevantados/status",
+                                //espacios
+                                "espacios/all/enable",
+                                "espacios/all",
+                                "espacios/{id}",
+                                //edificios
+                                "edificios/all",
+                                "edificios/all/enable",
+                                "edificios/all/disable",
+                                "edificios/{id}",
+                                //categoria de recursos
+                                "categoriasRecursos/all",
+                                "categoriasRecursos/all/enable",
+                                "categoriasRecursos/all/disable",
+                                "categoriasRecursos/{id}",
+
+                                //categoria espacios
+                                "categoriasEspacios/all",
+                                "categoriasEspacios/{id}",
+                                "categoriasEspacios/actives"
+                        ).hasAnyAuthority("ROLE_ADMIN_ACCESS","ROLE_INSPECTOR_ACCESS")
+                        .requestMatchers( //admin
+                                //usuarios
+                                "auth/login",
+                                "usuarios/all",
+                                "usuarios/{id}",
+                                "usuarios/update",
+                                "usuarios/changeStatus",
+                                "usuarios/actives",
+                                "usuarios/delete",
+                                "usuarios/verify-code",
+                                "usuarios/change-password",
+                                "usuarios/change-password-gral",
+                                //responsables
+                                "responsables/all",
+                                "responsables/{id}",
+                                "responsables/actives",
+                                "responsables/save",
+                                "responsables/update",
+                                "responsables/changeStatus",
+                                //recursos (falta)
+                                "recursos/all",
+                                "recursos/save",
+                                //notificaciones
+                                "notificaciones/all","notificaciones/{id}",
+                                "notificaciones/pendientes",
+                                "notificaciones/crear",
+                                "notificaciones/actualizarEstado/{id}",
+                                "notificaciones/aprobar/{notificacionId}",
+                                "notificaciones/rechazar/{notificacionId}",
+                                //inventarios - levanados
+                                "inventariosLevantados/all",
+                                "inventariosLevantados/save",
+                                "inventariosLevantados/all/enable", "inventariosLevantados/all/disable",
+                                "inventariosLevantados/status",
+                                //espacios
+                                "espacios/all","espacios/{id}",
+                                "espacios/all/enable", "espacios/all/disable",
+                                "espacios/changeStatus","espacios/update",
+                                "espacios/save",
+                                //edificios
+                                "edificios/all",
+                                "edificios/save",
+                                "edificios/all/enable", "edificios/all/disable",
+                                "edificios/status","edificios/update",
+                                //categoria de recursos
+                                "categoriasRecursos/all",
+                                "categoriasRecursos/all/enable","categoriasRecursos/all/disable",
+                                "categoriasRecursos/{id}",
+                                "categoriasRecursos/save",
+                                "categoriasRecursos/status",
+                                //categorias de espacios
+                                "categoriasRecursos/all", "categoriasEspacios/{id}",
+                                "categoriasEspacios/actives", "categoriasEspacios/save",
+                                "categoriasEspacios/update", "categoriasEspacios/changeStatus"
+
+                        ).hasAnyAuthority("ROLE_ADMIN_ACCESS")
 
                         .anyRequest().authenticated()
 
@@ -56,7 +151,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5500")); // Configura los orígenes permitidos
+        configuration.setAllowedOrigins(Arrays.asList("*")); // Configura los orígenes permitidos
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setExposedHeaders(Arrays.asList("Authorization")); // Permite exponer ciertos headers

@@ -17,16 +17,17 @@ public class UsuarioController {
     public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
-
+   //admin
     @GetMapping("/all")
     public ResponseEntity<Message> findAll() {
         return usuarioService.findAll();
     }
-
+    //admin
     @GetMapping("/{id}")
     public ResponseEntity<Message> findById(@PathVariable Long id) {
         return usuarioService.findById(id);
     }
+    //adin
     @PostMapping("/save")
     public ResponseEntity<Message> save(@RequestBody UsuarioDto usuarioDto) {
         return usuarioService.save(usuarioDto);

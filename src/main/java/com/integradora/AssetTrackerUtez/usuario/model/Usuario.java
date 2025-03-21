@@ -17,25 +17,26 @@ import java.util.Set;
 @Entity
 @Table(name = "usuarios")
 public class Usuario {
+    //ide del usuario
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    //nombre del usario
     @NotBlank(message = "El nombre es obligatorio")
     @Column(name = "nombre", columnDefinition = "VARCHAR(100)")
     private String nombre;
-
+    //apellidos del usario
     @NotBlank(message = "Los apellidos son obligatorios")
     @Column(name = "apellidos", columnDefinition = "VARCHAR(100)")
     private String apellidos;
-
+    //correo
     @Email(message = "Debe ser un correo válido")
     @NotBlank(message = "El correo es obligatorio")
     @Column(name = "correo", columnDefinition = "VARCHAR(100)", unique = true)
     private String correo;
-
+    //contrasena
     @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
-    @Column(name = "contrasena", columnDefinition = "VARCHAR(255)")
+    @Column(name = "contrasena", columnDefinition = "VARCHAR(255)", nullable=false )
     private String contrasena;
 
     @Column(name = "estado", columnDefinition = "BOOL DEFAULT TRUE")
@@ -50,6 +51,7 @@ public class Usuario {
     @Column(name = "ultimaActualizacion",columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Temporal(TemporalType.TIMESTAMP)
     private Date ultimaActualizacion;
+    //code
     @Column(name = "codigo", columnDefinition = "VARCHAR(10)")
     private String codigo;
 
