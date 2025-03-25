@@ -14,7 +14,7 @@ public class InventarioLevantado {
     //id autogeneradoo
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     //status
 
     @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
@@ -25,7 +25,9 @@ public class InventarioLevantado {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
 
-    // FALTA ÚLTIMA ACTUALIZACIÓN
+    @Column(name = "update_at", columnDefinition = "TIMESTAMP")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaActualizacion;
 
 
     //este es el espacio
@@ -48,15 +50,21 @@ public class InventarioLevantado {
         return status;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
+    public Date getFechaActualizacion() {
+        return fechaActualizacion;
+    }
 
+    public void setFechaActualizacion(Date fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
+    }
 
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;

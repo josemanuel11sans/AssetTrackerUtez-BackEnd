@@ -13,7 +13,7 @@ public class CategoriaRecurso {
     //id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     //nombre
     @NotBlank(message = "El nombre es obligatorio")
     @Column(name = "nombre", columnDefinition = "VARCHAR(100)")
@@ -37,7 +37,9 @@ public class CategoriaRecurso {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
 
-    // FALTA ÚLTIMA ACTUALIZACIÓN
+    @Column(name = "update_at", columnDefinition = "TIMESTAMP")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaActualizacion;
 
     @OneToMany(mappedBy = "categoriaRecurso")
     private List<Recurso> recursos;
@@ -53,12 +55,8 @@ public class CategoriaRecurso {
         this.status = status;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getNombre() {
@@ -99,5 +97,25 @@ public class CategoriaRecurso {
 
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public Date getFechaActualizacion() {
+        return fechaActualizacion;
+    }
+
+    public void setFechaActualizacion(Date fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -17,7 +17,7 @@ public class Espacio {
     //id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     //nombre
     @Column(name = "nombre", columnDefinition = "VARCHAR(100)")
     private String nombre;
@@ -32,12 +32,15 @@ public class Espacio {
     @Column(name = "publicid", columnDefinition = "VARCHAR(255)")
     private String publicId;
 
-
-
     //Este campo no tiene ni getter ni setter
     @Column(name = "create_at", insertable = false  ,columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
+
+    @Column(name = "update_at", columnDefinition = "TIMESTAMP")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaActualizacion;
+
     //varios espacios pueden pertenecer a un edificio
     @ManyToOne
     @JsonIgnore
@@ -69,11 +72,11 @@ public class Espacio {
         this.publicId = publicId;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -115,6 +118,14 @@ public class Espacio {
 
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public Date getFechaActualizacion() {
+        return fechaActualizacion;
+    }
+
+    public void setFechaActualizacion(Date fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
     }
 
     public Edificio getEdificio() {
