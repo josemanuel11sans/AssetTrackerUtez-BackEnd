@@ -40,9 +40,18 @@ public class EdificioController {
     public ResponseEntity<Object> CambiarEstado(@Validated(EdificioDTO.ChangeStatus.class) @RequestBody EdificioDTO dto){
         return edificioService.changeStatus(dto);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> findById(@PathVariable int id) {
+        return edificioService.findById(id);
+    }
     //Actualizar un edificio
     @PutMapping("/update")
     public ResponseEntity<Object> ActualizarEdificio(@Validated(EdificioDTO.Modify.class) @RequestBody EdificioDTO dto){
         return edificioService.actualizarEdificio(dto);
+    }
+
+    @GetMapping("/count")
+    public long getNumeroDeEdificios() {
+        return edificioService.contarEdificios();
     }
 }

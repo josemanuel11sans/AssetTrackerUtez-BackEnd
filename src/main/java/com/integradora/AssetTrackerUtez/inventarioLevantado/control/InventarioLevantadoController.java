@@ -40,7 +40,10 @@ public class InventarioLevantadoController {
         return inventarioLevantadoService.changeStatus(dto);
     }
 
-
+    @GetMapping("/count")
+    public long getNumeroDeEdificios() {
+        return inventarioLevantadoService.contarInventarios();
+    }
 
 
 }

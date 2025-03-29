@@ -136,6 +136,19 @@ public class EdificioService {
 
         return new ResponseEntity<>(new Message(edificio, "Edificio actualizado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> findById(int id) {
+        if (!edificioRepository.existsById((long) id)){
+            return new ResponseEntity<>(new Message(null, "Edificio no encontrado", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(new Message(edificioRepository.findById((long) id), "Edificio encontrado", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public long contarEdificios(){
+        return  edificioRepository.count();
+    }
+
     //funcion para capitalizar la primera letra de un texto
     public static String capitalizarPrimeraLetra(String texto) {
         texto = texto.toLowerCase();

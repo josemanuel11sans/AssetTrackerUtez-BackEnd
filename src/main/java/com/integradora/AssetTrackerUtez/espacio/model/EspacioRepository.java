@@ -11,6 +11,6 @@ public interface EspacioRepository  extends JpaRepository<Espacio, Long> {
     boolean existsByNombre(String nombre);
     //buscar por id
     Optional<Espacio> findById(Long id);
-
+    long count();
 
 }

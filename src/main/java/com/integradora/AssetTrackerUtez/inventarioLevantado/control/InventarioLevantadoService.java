@@ -92,4 +92,8 @@ public class InventarioLevantadoService {
     public  ResponseEntity<Object> disable(){
         return new ResponseEntity<>(new Message(inventarioLevantadoRepository.findAllByStatus(false), "Listado de invatarios inactivos", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+    @Transactional(rollbackFor = {SQLException.class})
+    public long contarInventarios(){
+        return  inventarioLevantadoRepository.count();
+    }
 }

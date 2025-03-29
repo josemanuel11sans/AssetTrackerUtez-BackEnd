@@ -14,4 +14,6 @@ public interface EdificioRepository  extends JpaRepository<Edificio, Long> {
     //valida si existe el nombre regresar un boolean
     boolean existsByNombre(String nombre);
     //Edificio saveAndFlush(Edificio edificio);
+    // Método para contar el número total de edificios
+    long count();
 }

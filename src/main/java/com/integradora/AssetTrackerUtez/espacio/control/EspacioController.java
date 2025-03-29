@@ -65,4 +65,9 @@ public class    EspacioController {
         }
         return espacioService.update(dto, file);
     }
+
+    @GetMapping("/count")
+    public long getNumeroDeEdificios() {
+        return espacioService.contarEspacios();
+    }
 }

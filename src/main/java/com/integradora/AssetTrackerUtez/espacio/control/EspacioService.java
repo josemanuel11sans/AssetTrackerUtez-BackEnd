@@ -161,6 +161,12 @@ public class EspacioService {
         }
         return new ResponseEntity<>(new Message(espacio, "Estado del espacio actualizado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public long contarEspacios(){
+        return  espacioRepository.count();
+    }
+
     //funcion para capitalizar la primera letra de un texto
     public static String capitalizarPrimeraLetra(String texto) {
         texto = texto.toLowerCase();

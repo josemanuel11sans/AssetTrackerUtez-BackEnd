@@ -154,6 +154,9 @@ public class RecursosService {
         return new ResponseEntity<>(new Message(recurso,"Recurso guardado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
-
+    @Transactional(rollbackFor = {SQLException.class})
+    public long contarRecursos(){
+        return  recursosRepository.count();
+    }
 
 }

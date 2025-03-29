@@ -9,4 +9,5 @@ public interface RecursosRepository extends JpaRepository<Recurso, Long> {
     List<Recurso> findByStatus(boolean status);
 
     Optional<Recurso> findById(Long id);
+    long count();
 }
