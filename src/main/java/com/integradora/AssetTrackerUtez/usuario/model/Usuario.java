@@ -55,7 +55,7 @@ public class Usuario {
     @Column(name = "codigo", columnDefinition = "VARCHAR(10)")
     private String codigo;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinTable(
             name = "usuario_role",

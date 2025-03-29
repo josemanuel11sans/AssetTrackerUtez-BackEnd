@@ -21,9 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService {
@@ -44,20 +43,64 @@ public class UsuarioService {
     }
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findAll() {
-        List<Usuario> usuarios = usuarioRepository.findAll();
+        // Usar la consulta nativa para obtener los datos
+        List<Object[]> usuarios = usuarioRepository.findAllWithRolesNative();
+
+        // Convertir los resultados al formato deseado
+        List<Map<String, Object>> usuariosConRoles = usuarios.stream().map(fila -> {
+            Map<String, Object> usuario = new HashMap<>();
+            usuario.put("id", fila[0]);                 // usuario_id
+            usuario.put("nombre", fila[1]);             // usuario_nombre
+            usuario.put("apellidos", fila[2]);          // usuario_apellidos
+            usuario.put("correo", fila[3]);             // usuario_correo
+            usuario.put("contrasena", fila[4]);          // usuario_ontraseña
+            usuario.put("estado", fila[5]);              // usuario_estado
+            usuario.put("fechaCreacion", fila[6]);       // fecha_creacion
+            usuario.put("ultimaActualizacion", fila[7]); // ultima_actualizacion
+            usuario.put("codigo", fila[8]);              // usuario_codigo
+            usuario.put("rolId", fila[9]);               // rol_id
+            usuario.put("rol", fila[10]);                // rol_nombre
+            return usuario;
+        }).collect(Collectors.toList());
+
+        // Log y retorno de la respuesta
         logger.info("La búsqueda de todos los usuarios ha sido realizada correctamente");
-        return new ResponseEntity<>(new Message(usuarios, "Listado de usuarios", TypesResponse.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(usuariosConRoles, "Listado de usuarios", TypesResponse.SUCCESS), HttpStatus.OK);
     }
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findById(Long id) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
-        if (usuarioOptional.isPresent()) {
-            Usuario foundCliente = usuarioOptional.get();
-            return new ResponseEntity<>(new Message(foundCliente, "Usuario encontrado", TypesResponse.SUCCESS), HttpStatus.OK);
-        } else {
+        List<Object[]> resultados = usuarioRepository.findByIdWithRolesNative(id);
+
+        if (resultados.isEmpty()) {
             return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
+
+        // Tomar los datos comunes del usuario desde la primera fila
+        Object[] primeraFila = resultados.get(0);
+        Map<String, Object> usuario = new HashMap<>();
+        usuario.put("id", primeraFila[0]);                 // usuario_id
+        usuario.put("nombre", primeraFila[1]);             // usuario_nombre
+        usuario.put("apellidos", primeraFila[2]);          // usuario_apellidos
+        usuario.put("correo", primeraFila[3]);             // usuario_correo
+        usuario.put("contrasena", primeraFila[4]);         // usuario_contraseña
+        usuario.put("estado", primeraFila[5]);             // usuario_estado
+        usuario.put("fechaCreacion", primeraFila[6]);      // fecha_creacion
+        usuario.put("ultimaActualizacion", primeraFila[7]);// ultima_actualizacion
+        usuario.put("codigo", primeraFila[8]);             // usuario_codigo
+
+        // Agregar los roles en una lista
+        List<Map<String, Object>> roles = resultados.stream().map(fila -> {
+            Map<String, Object> rol = new HashMap<>();
+            rol.put("rolId", fila[9]);       // rol_id
+            rol.put("rol", fila[10]);        // rol_nombre
+            return rol;
+        }).collect(Collectors.toList());
+
+        usuario.put("roles", roles);
+
+        return new ResponseEntity<>(new Message(usuario, "Usuario encontrado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Message> save(UsuarioDto dto) {
         // Validación de longitudes
@@ -92,7 +135,7 @@ public class UsuarioService {
         // Asociar el rol al usuario
         usuario.getRol().add(rol);
         usuario = usuarioRepository.saveAndFlush(usuario);
-
+        logger.info(String.valueOf(rol));
         if (usuario == null) {
             return new ResponseEntity<>(new Message("El usuario no se registró", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
