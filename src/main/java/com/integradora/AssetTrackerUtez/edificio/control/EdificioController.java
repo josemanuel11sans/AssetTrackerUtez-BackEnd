@@ -2,8 +2,12 @@ package com.integradora.AssetTrackerUtez.edificio.control;
 
 import com.integradora.AssetTrackerUtez.edificio.model.EdificioDTO;
 import com.integradora.AssetTrackerUtez.espacio.model.EspaciosDTO;
+import com.integradora.AssetTrackerUtez.utils.Message;
+import com.integradora.AssetTrackerUtez.utils.TypesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,8 +52,12 @@ public class EdificioController {
     }
     //Actualizar un edificio
     @PutMapping("/update")
-    public ResponseEntity<Object> ActualizarEdificio(@Validated(EdificioDTO.Modify.class) @RequestBody EdificioDTO dto){
-        return edificioService.actualizarEdificio(dto);
+    public ResponseEntity<Object> ActualizarEdificio( @ModelAttribute @Validated(EdificioDTO.Modify.class)EdificioDTO dto,@RequestParam(value = "file", required = false) MultipartFile file, BindingResult bindingResult){
+        // Si hay errores de validación, devolverlos
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(new Message(null, "Errores de validación", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }
+        return edificioService.actualizarEdificio(dto, file);
     }
 
     @GetMapping("/count")

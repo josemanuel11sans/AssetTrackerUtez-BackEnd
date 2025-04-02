@@ -56,9 +56,7 @@ public class    EspacioController {
         return espacioService.save(dto, file);
     }
     @PutMapping("/update")
-    public ResponseEntity<Object> update(@Valid @ModelAttribute EspaciosDTO dto,
-                                         @RequestParam(value = "file", required = false) MultipartFile file,
-                                         BindingResult bindingResult) {
+    public ResponseEntity<Object> update(@Valid @ModelAttribute EspaciosDTO dto, @RequestParam(value = "file", required = false) MultipartFile file, BindingResult bindingResult) {
         // Si hay errores de validación, devolverlos
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(new Message(null, "Errores de validación", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);

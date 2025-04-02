@@ -108,14 +108,32 @@ public class EdificioService {
     }
     //actualizar un edificio
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<Object> actualizarEdificio(EdificioDTO dto) {
+    public ResponseEntity<Object> actualizarEdificio(EdificioDTO dto, MultipartFile file ) {
         Optional<Edificio> optional = edificioRepository.findById(dto.getId());
         // Verifica si el edificio existe
         if (!optional.isPresent()) {
             return new ResponseEntity<>(new Message("Edificio no encontrado", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
+
         // Obtiene el edificio actual desde la base de datos
         Edificio edificio = optional.get();
+
+        // Si hay un nuevo archivo, validamos y subimos la nueva imagen
+        if (file != null && !file.isEmpty()) {
+            if (!file.getContentType().startsWith("image/")) {
+                return new ResponseEntity<>(new Message(null, "El archivo debe ser una imagen (JPG, PNG, etc.)", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+            }
+
+            // Obtener el publicId actual o generar uno nuevo si no existe
+            String publicId = edificio.getPublicId() != null ? edificio.getPublicId() : "edificio/" + dto.getId();
+
+            // Subir la imagen y obtener el resultado (URL y public_id actualizado)
+            Map<String, String> uploadResult = cloudinaryService.updateFile(file, publicId);
+
+            // Guardar los nuevos valores en el objeto
+            edificio.setUrlImagen(uploadResult.get("url"));
+            edificio.setPublicId(uploadResult.get("public_id"));
+        }
         // Validación y actualización del nombre (si se proporciona)
         if (dto.getNombre() != null) {
             if (dto.getNombre().length() < 3) {
