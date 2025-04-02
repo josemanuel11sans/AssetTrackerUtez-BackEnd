@@ -18,17 +18,22 @@ public class Espacio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     //nombre
     @Column(name = "nombre", columnDefinition = "VARCHAR(100)")
     private String nombre;
+
     //numeroPlanta
     @Column(name = "numeroPlanta", columnDefinition = "INT")
     private Integer numeroPlanta;
+
     // urlImagen
     @Column(name = "urlImagen", columnDefinition = "VARCHAR(255)")
     private String urlImagen;
+
     @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
     private boolean status = true;
+
     @Column(name = "publicid", columnDefinition = "VARCHAR(255)")
     private String publicId;
 

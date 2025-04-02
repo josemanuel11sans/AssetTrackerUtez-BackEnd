@@ -33,6 +33,12 @@ public class Edificio {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
 
+    @Column(name = "urlImagen", columnDefinition = "VARCHAR(255)")
+    private String urlImagen;
+
+    @Column(name = "publicid", columnDefinition = "VARCHAR(255)")
+    private String publicId;
+
     // Columna para almacenar la fecha de actualización
     @Column(name = "update_at", columnDefinition = "TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
@@ -52,10 +58,12 @@ public class Edificio {
     }
 
     // Constructor con parámetros (sin fechaCreacion)
-    public Edificio(String nombre, Integer numeroPisos, boolean status) {
+    public Edificio(String nombre, Integer numeroPisos,String urlImagen,String publicId, boolean status) {
         this.nombre = nombre;
         this.numeroPisos = numeroPisos;
         this.status = status;
+        this.publicId = publicId;
+        this.urlImagen = urlImagen;
     }
 
     // Método para establecer la fecha de creación automáticamente
@@ -111,5 +119,29 @@ public class Edificio {
 
     public void setEspacios(List<Espacio> espacios) {
         this.espacios = espacios;
+    }
+
+    public String getUrlImagen() {
+        return urlImagen;
+    }
+
+    public void setUrlImagen(String urlImagen) {
+        this.urlImagen = urlImagen;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
+
+    public Date getFechaActualizacion() {
+        return fechaActualizacion;
+    }
+
+    public void setFechaActualizacion(Date fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
     }
 }

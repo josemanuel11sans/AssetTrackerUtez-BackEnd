@@ -1,10 +1,12 @@
 package com.integradora.AssetTrackerUtez.edificio.control;
 
 import com.integradora.AssetTrackerUtez.edificio.model.EdificioDTO;
+import com.integradora.AssetTrackerUtez.espacio.model.EspaciosDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/edificios")
@@ -17,8 +19,8 @@ public class EdificioController {
     }
     //Guardar un edificio
     @PostMapping("/save")
-    public ResponseEntity<Object> save(@Validated(EdificioDTO.Register.class) @RequestBody EdificioDTO dto){
-        return edificioService.GuardarEdificio(dto);
+    public ResponseEntity<Object> save(@ModelAttribute @Validated(EdificioDTO.Register.class) EdificioDTO dto,  @RequestParam("file") MultipartFile file){
+        return edificioService.GuardarEdificio(dto, file);
     }
     //Listar todos los edificios
     @GetMapping("/all")
