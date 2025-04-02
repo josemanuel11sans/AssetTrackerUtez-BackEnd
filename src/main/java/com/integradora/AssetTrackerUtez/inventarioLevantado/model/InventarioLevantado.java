@@ -1,6 +1,7 @@
 package com.integradora.AssetTrackerUtez.inventarioLevantado.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.integradora.AssetTrackerUtez.espacio.model.Espacio;
 import com.integradora.AssetTrackerUtez.recurso.model.Recurso;
 import jakarta.persistence.*;
@@ -32,10 +33,11 @@ public class InventarioLevantado {
 
     //este es el espacio
     @ManyToOne
-    @JsonIgnore
+    @JsonIgnoreProperties({"nombre", "numeroPlanta", "urlImagen", "status", "publicId","fechaCreacion","edificio","fechaActualizacion","categoriaEspacio"})
     private Espacio espacio;
 
     @OneToMany(mappedBy = "inventarioLevantado")
+    @JsonIgnore
     private List<Recurso> recursos;
 
     public InventarioLevantado(boolean status, Espacio espacio) {

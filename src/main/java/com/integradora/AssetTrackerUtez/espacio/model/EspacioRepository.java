@@ -12,5 +12,6 @@ public interface EspacioRepository  extends JpaRepository<Espacio, Long> {
     //buscar por id
     Optional<Espacio> findById(Long id);
     long count();
+    List<Espacio> findAllByEdificioId(Long idEdificio);
 
 }

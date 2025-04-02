@@ -1,5 +1,6 @@
 package com.integradora.AssetTrackerUtez.edificio.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.integradora.AssetTrackerUtez.espacio.model.Espacio;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -15,43 +16,63 @@ public class Edificio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @NotBlank(message = "El nombre es obligatorio")
     @Column(name = "nombre", columnDefinition = "VARCHAR(100)")
     private String nombre;
+
     @NotNull(message = "El número de pisos es obligatorio")
     @Column(name = "numeroPisos", columnDefinition = "INT")
     private Integer numeroPisos;
+
     @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
     private boolean status = true;
+
     // Columna para almacenar la fecha de creación
     @Column(name = "create_at", columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
+
+    @Column(name = "urlImagen", columnDefinition = "VARCHAR(255)")
+    private String urlImagen;
+
+    @Column(name = "publicid", columnDefinition = "VARCHAR(255)")
+    private String publicId;
+
     // Columna para almacenar la fecha de actualización
     @Column(name = "update_at", columnDefinition = "TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
+
     @PreUpdate
     protected void onUpdate() {
         this.fechaActualizacion = new Date(); // Establece la fecha y hora actuales al actualizar
     }
+
     @OneToMany(mappedBy = "edificio")
+    @JsonIgnore
     private List<Espacio> espacios;
+
     // Constructor vacío (obligatorio para JPA)
     public Edificio() {
     }
+
     // Constructor con parámetros (sin fechaCreacion)
-    public Edificio(String nombre, Integer numeroPisos, boolean status) {
+    public Edificio(String nombre, Integer numeroPisos,String urlImagen,String publicId, boolean status) {
         this.nombre = nombre;
         this.numeroPisos = numeroPisos;
         this.status = status;
+        this.publicId = publicId;
+        this.urlImagen = urlImagen;
     }
+
     // Método para establecer la fecha de creación automáticamente
     @PrePersist
     protected void onCreate() {
         this.fechaCreacion = new Date(); // Establece la fecha y hora actuales
     }
     // Getters y Setters
+
     public int getId() {
         return id;
     }
@@ -98,5 +119,29 @@ public class Edificio {
 
     public void setEspacios(List<Espacio> espacios) {
         this.espacios = espacios;
+    }
+
+    public String getUrlImagen() {
+        return urlImagen;
+    }
+
+    public void setUrlImagen(String urlImagen) {
+        this.urlImagen = urlImagen;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
+
+    public Date getFechaActualizacion() {
+        return fechaActualizacion;
+    }
+
+    public void setFechaActualizacion(Date fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
     }
 }

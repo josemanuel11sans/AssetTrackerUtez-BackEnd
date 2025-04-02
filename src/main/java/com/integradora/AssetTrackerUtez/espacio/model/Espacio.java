@@ -1,6 +1,7 @@
 package com.integradora.AssetTrackerUtez.espacio.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.integradora.AssetTrackerUtez.categoriaEspacio.model.CategoriaEspacio;
 import com.integradora.AssetTrackerUtez.edificio.model.Edificio;
 import com.integradora.AssetTrackerUtez.inventarioLevantado.model.InventarioLevantado;
@@ -18,17 +19,22 @@ public class Espacio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     //nombre
     @Column(name = "nombre", columnDefinition = "VARCHAR(100)")
     private String nombre;
+
     //numeroPlanta
     @Column(name = "numeroPlanta", columnDefinition = "INT")
     private Integer numeroPlanta;
+
     // urlImagen
     @Column(name = "urlImagen", columnDefinition = "VARCHAR(255)")
     private String urlImagen;
+
     @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
     private boolean status = true;
+
     @Column(name = "publicid", columnDefinition = "VARCHAR(255)")
     private String publicId;
 
@@ -43,14 +49,15 @@ public class Espacio {
 
     //varios espacios pueden pertenecer a un edificio
     @ManyToOne
-    @JsonIgnore
+    @JsonIgnoreProperties({"nombre", "numeroPisos", "status", "fechaCreacion", "espacios","urlImagen","publicId","fechaActualizacion"})
     private Edificio edificio;
     //varios espacios pueden pertenecer a una categoria
     @ManyToOne
-    @JsonIgnore
+    @JsonIgnoreProperties({"nombre", "descripcion", "estado", "fechaCreacion", "ultimaActualizacion"})
     private CategoriaEspacio categoriaEspacio;
     //un espacio puede tener varios inventarios levantados
     @OneToMany (mappedBy = "espacio")
+    @JsonIgnore
     private List<InventarioLevantado> inventariosLevantados;
 
     public Espacio() {
