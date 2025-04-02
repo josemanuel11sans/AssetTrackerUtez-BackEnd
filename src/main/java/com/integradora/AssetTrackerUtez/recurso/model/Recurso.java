@@ -56,15 +56,18 @@ public class Recurso {
     private Date fechaCreacion;
 
     @ManyToOne
-    @JsonIgnore
+    @JsonManagedReference
+    @JsonIgnoreProperties({"status", "fechaCreacion", "fechaActualizacion", "espacio"})
     private InventarioLevantado inventarioLevantado;
 
     @ManyToOne
     @JsonManagedReference
+    @JsonIgnoreProperties({"nombre", "material", "imagenUrl", "status", "publicId","fechaCreacion","fechaActualizacion"})
     private CategoriaRecurso categoriaRecurso;
 
     @ManyToOne
     @JsonManagedReference
+    @JsonIgnoreProperties({"nombre", "divisionAcademica", "estado", "fechaCreacion", "ultimaActualizacion"})
     private Responsable responsable;
 
     public Recurso() {
