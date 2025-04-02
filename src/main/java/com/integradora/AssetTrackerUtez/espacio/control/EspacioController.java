@@ -63,6 +63,11 @@ public class    EspacioController {
         }
         return espacioService.update(dto, file);
     }
+    @GetMapping("/edificio/{idEdificio}")
+    public ResponseEntity<Object> getEspaciosPorEdificio(@PathVariable Long idEdificio) {
+        return espacioService.findByEdificioId(idEdificio);
+    }
+
 
     @GetMapping("/count")
     public long getNumeroDeEdificios() {

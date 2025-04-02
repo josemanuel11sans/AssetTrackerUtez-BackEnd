@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -57,6 +58,17 @@ public class EspacioService {
     public ResponseEntity<Object> findAll() {
         return new ResponseEntity<>(new Message(espacioRepository.findAll(), "Listado de espacios", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> findByEdificioId(Long idEdificio) {
+        List<Espacio> espacios = espacioRepository.findAllByEdificioId(idEdificio);
+
+        if (espacios.isEmpty()) {
+            return new ResponseEntity<>(new Message(null, "No se encontraron espacios para este edificio", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new Message(espacios, "Espacios encontrados", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
     //Método para buscar un espacio por id
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findById(int id) {
