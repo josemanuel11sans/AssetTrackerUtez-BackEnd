@@ -8,6 +8,7 @@ import com.integradora.AssetTrackerUtez.rol.model.RolRepository;
 import com.integradora.AssetTrackerUtez.usuario.model.Usuario;
 import com.integradora.AssetTrackerUtez.usuario.model.UsuarioDto;
 import com.integradora.AssetTrackerUtez.usuario.model.UsuarioRepository;
+import com.integradora.AssetTrackerUtez.utils.EmailSender;
 import com.integradora.AssetTrackerUtez.utils.Message;
 import com.integradora.AssetTrackerUtez.utils.TypesResponse;
 import org.slf4j.Logger;
@@ -31,15 +32,17 @@ public class UsuarioService {
     private final RolRepository rolRepository;
     private final NotificacionRegistroRepository notificacionRegistroRepository;
     private final  NotificacionRegistroService notificacionRegistroService;
+    private final EmailSender emailSender;
 
     private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository, RolRepository rolRepository, PasswordEncoder passwordEncoder, NotificacionRegistroRepository notificacionRegistroRepository, NotificacionRegistroService notificacionRegistroService) {
+    public UsuarioService(UsuarioRepository usuarioRepository, RolRepository rolRepository, PasswordEncoder passwordEncoder, NotificacionRegistroRepository notificacionRegistroRepository, NotificacionRegistroService notificacionRegistroService, EmailSender emailSender) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.passwordEncoder = passwordEncoder;
         this.notificacionRegistroRepository = notificacionRegistroRepository;
         this.notificacionRegistroService = notificacionRegistroService;
+        this.emailSender = emailSender;
     }
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findAll() {
@@ -115,13 +118,13 @@ public class UsuarioService {
             return new ResponseEntity<>(new Message("Rol no encontrado", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
         Rol rol = optionalRole.get();
-        //String contrasenaEncriptada = passwordEncoder.encode(dto.getContrasena());
+        String contrasenaEncriptada = passwordEncoder.encode(dto.getContrasena());
         Usuario usuario = new Usuario(
                 dto.getNombre(),
                 dto.getApellidos(),
                 dto.getCorreo(),
-                //contrasenaEncriptada,
-                dto.getContrasena(),
+                contrasenaEncriptada,
+                //dto.getContrasena(),
                 false,
                 dto.getFechaCreacion(),
                 dto.getUltimaActualizacion()
@@ -275,5 +278,143 @@ public class UsuarioService {
         }
 
         return new ResponseEntity<>(new Message("La contraseña actual es correcta", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<Object> sendEmail(UsuarioDto dto) {
+        Optional<Usuario> optional = usuarioRepository.findFirstByCorreo(dto.getCorreo());
+        if (!optional.isPresent()) {
+            return new ResponseEntity<>(new Message("Usuario no encontrado", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+        }
+
+        Random random = new Random();
+        StringBuilder numberString = new StringBuilder();
+
+        for (int i = 0; i < 5; i++) {
+            int digit = random.nextInt(10);
+            numberString.append(digit);
+        }
+
+        Usuario user = optional.get();
+        user.setCodigo(numberString.toString());
+        user = usuarioRepository.saveAndFlush(user);
+        if (user == null) {
+            return new ResponseEntity<>(new Message("Código no registrado", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }
+
+        emailSender.sendEmail(user.getCorreo(),
+                "AssetTracker | Solicitud de restablecimiento de contraseña",
+                "<!DOCTYPE html>\n" +
+                        "<html xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" lang=\"es\">\n" +
+                        "<head>\n" +
+                        "    <meta charset=\"UTF-8\">\n" +
+                        "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+                        "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                        "    <title>Restablecer contraseña</title>\n" +
+                        "    <style>\n" +
+                        "        body {\n" +
+                        "            margin: 0;\n" +
+                        "            padding: 0;\n" +
+                        "            font-family: 'Arial', sans-serif;\n" +
+                        "            line-height: 1.6;\n" +
+                        "            color: #333333;\n" +
+                        "            background-color: #f5f7fa;\n" +
+                        "        }\n" +
+                        "        .container {\n" +
+                        "            max-width: 600px;\n" +
+                        "            margin: 0 auto;\n" +
+                        "            background: #ffffff;\n" +
+                        "            border-radius: 8px;\n" +
+                        "            overflow: hidden;\n" +
+                        "            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n" +
+                        "        }\n" +
+                        "        .header {\n" +
+                        "            background-color: #133E87;\n" +
+                        "            padding: 30px 20px;\n" +
+                        "            text-align: center;\n" +
+                        "        }\n" +
+                        "        .header h1 {\n" +
+                        "            color: #ffffff;\n" +
+                        "            margin: 0;\n" +
+                        "            font-size: 24px;\n" +
+                        "            font-weight: 600;\n" +
+                        "        }\n" +
+                        "        .content {\n" +
+                        "            padding: 30px;\n" +
+                        "        }\n" +
+                        "        .code-container {\n" +
+                        "            background-color: #f0f4f9;\n" +
+                        "            border-radius: 6px;\n" +
+                        "            padding: 20px;\n" +
+                        "            margin: 25px 0;\n" +
+                        "            text-align: center;\n" +
+                        "        }\n" +
+                        "        .verification-code {\n" +
+                        "            font-size: 32px;\n" +
+                        "            font-weight: bold;\n" +
+                        "            color: #133E87;\n" +
+                        "            letter-spacing: 3px;\n" +
+                        "        }\n" +
+                        "        .footer {\n" +
+                        "            text-align: center;\n" +
+                        "            padding: 20px;\n" +
+                        "            font-size: 12px;\n" +
+                        "            color: #777777;\n" +
+                        "            background-color: #f5f7fa;\n" +
+                        "        }\n" +
+                        "        .button {\n" +
+                        "            display: inline-block;\n" +
+                        "            padding: 12px 24px;\n" +
+                        "            background-color: #133E87;\n" +
+                        "            color: #ffffff !important;\n" +
+                        "            text-decoration: none;\n" +
+                        "            border-radius: 4px;\n" +
+                        "            font-weight: 600;\n" +
+                        "            margin: 15px 0;\n" +
+                        "        }\n" +
+                        "        .icon {\n" +
+                        "            width: 80px;\n" +
+                        "            height: 80px;\n" +
+                        "            margin-bottom: 20px;\n" +
+                        "        }\n" +
+                        "        @media only screen and (max-width: 600px) {\n" +
+                        "            .container {\n" +
+                        "                width: 100%;\n" +
+                        "                border-radius: 0;\n" +
+                        "            }\n" +
+                        "            .content {\n" +
+                        "                padding: 20px;\n" +
+                        "            }\n" +
+                        "        }\n" +
+                        "    </style>\n" +
+                        "</head>\n" +
+                        "<body>\n" +
+                        "    <div class=\"container\">\n" +
+                        "        <div class=\"header\">\n" +
+                        "            <h1>Restablecimiento de contraseña</h1>\n" +
+                        "        </div>\n" +
+                        "        <div class=\"content\">\n" +
+                        "            <div style=\"text-align: center;\">\n" +
+                        "                <svg class=\"icon\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"#133E87\">\n" +
+                        "                    <path d=\"M12 1C8.14 1 5 4.14 5 8v1H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V11c0-1.1-.9-2-2-2h-1V8c0-3.86-3.14-7-7-7zm0 2c2.76 0 5 2.24 5 5v1H7V8c0-2.76 2.24-5 5-5zm6 8v10H6V11h12zm-6 3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z\"/>\n" +
+                        "                </svg>\n" +
+                        "            </div>\n" +
+                        "            <p style=\"text-align: center; color: #555555;\">Hemos recibido una solicitud para restablecer la contraseña de tu cuenta. Utiliza el siguiente código de verificación:</p>\n" +
+                        "            \n" +
+                        "            <div class=\"code-container\">\n" +
+                        "                <div class=\"verification-code\">" + user.getCodigo() + "</div>\n" +
+                        "            </div>\n" +
+                        "            \n" +
+                        "            <p style=\"text-align: center; color: #555555;\">Si no has solicitado este cambio, por favor ignora este mensaje.</p>\n" +
+                        "        </div>\n" +
+                        "        <div class=\"footer\">\n" +
+                        "            <p>Sistema AssetTracker UTEZ ©</p>\n" +
+                        "            <p>Este es un mensaje automático, por favor no respondas a este correo.</p>\n" +
+                        "        </div>\n" +
+                        "    </div>\n" +
+                        "</body>\n" +
+                        "</html>");
+
+        return new ResponseEntity<>(new Message("Correo enviado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 }
