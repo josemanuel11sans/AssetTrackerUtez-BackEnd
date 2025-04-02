@@ -1,5 +1,6 @@
 package com.integradora.AssetTrackerUtez.edificio.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.integradora.AssetTrackerUtez.espacio.model.Espacio;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -15,43 +16,55 @@ public class Edificio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @NotBlank(message = "El nombre es obligatorio")
     @Column(name = "nombre", columnDefinition = "VARCHAR(100)")
     private String nombre;
+
     @NotNull(message = "El número de pisos es obligatorio")
     @Column(name = "numeroPisos", columnDefinition = "INT")
     private Integer numeroPisos;
+
     @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
     private boolean status = true;
+
     // Columna para almacenar la fecha de creación
     @Column(name = "create_at", columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
+
     // Columna para almacenar la fecha de actualización
     @Column(name = "update_at", columnDefinition = "TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
+
     @PreUpdate
     protected void onUpdate() {
         this.fechaActualizacion = new Date(); // Establece la fecha y hora actuales al actualizar
     }
+
     @OneToMany(mappedBy = "edificio")
+    @JsonIgnore
     private List<Espacio> espacios;
+
     // Constructor vacío (obligatorio para JPA)
     public Edificio() {
     }
+
     // Constructor con parámetros (sin fechaCreacion)
     public Edificio(String nombre, Integer numeroPisos, boolean status) {
         this.nombre = nombre;
         this.numeroPisos = numeroPisos;
         this.status = status;
     }
+
     // Método para establecer la fecha de creación automáticamente
     @PrePersist
     protected void onCreate() {
         this.fechaCreacion = new Date(); // Establece la fecha y hora actuales
     }
     // Getters y Setters
+
     public int getId() {
         return id;
     }
