@@ -19,6 +19,17 @@ public class EspaciosDTO {
     @NotBlank(groups = { Register.class}, message = "Es necesario el public id de la imagen")
     private String publicId;
 
+    @NotNull(groups = {Register.class, Modify.class}, message = "Es necesario el id del edificio")
+    private Long idEdificio;
+
+    public Long getIdEdificio() {
+        return idEdificio;
+    }
+
+    public void setIdEdificio(Long idEdificio) {
+        this.idEdificio = idEdificio;
+    }
+
     public int getId() {
         return id;
     }
