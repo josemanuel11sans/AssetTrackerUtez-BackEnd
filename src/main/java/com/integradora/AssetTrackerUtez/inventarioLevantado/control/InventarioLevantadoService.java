@@ -96,4 +96,46 @@ public class InventarioLevantadoService {
     public long contarInventarios(){
         return  inventarioLevantadoRepository.count();
     }
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<Message> duplicateLast() {
+        // Obtener el último inventario creado
+        Optional<InventarioLevantado> ultimoInventarioOpt = inventarioLevantadoRepository.findFirstByOrderByFechaCreacionDesc();
+
+        // Validar si existe un inventario previamente creado
+        if (ultimoInventarioOpt.isEmpty()) {
+            return new ResponseEntity<>(
+                    new Message("No se encontró ningún inventario para duplicar", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        InventarioLevantado ultimoInventario = ultimoInventarioOpt.get();
+
+        // Crear el nuevo inventario duplicando los datos del último
+        InventarioLevantado inventarioDuplicado = new InventarioLevantado(
+                true,
+                ultimoInventario.getEspacio() // Espacio del último inventario
+        );
+
+        // Duplicar otros atributos que sean necesarios
+        inventarioDuplicado.setRecursos(ultimoInventario.getRecursos()); // Si tiene una lista de recursos
+
+
+        try {
+            // Guardar el inventario duplicado en la base de datos
+            inventarioLevantadoRepository.saveAndFlush(inventarioDuplicado);
+        } catch (Exception e) {
+            // Manejo de errores
+            return new ResponseEntity<>(
+                    new Message("Error al duplicar el inventario: " + e.getMessage(), TypesResponse.ERROR),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        // Respuesta exitosa
+        return new ResponseEntity<>(
+                new Message("Inventario duplicado exitosamente", TypesResponse.SUCCESS),
+                HttpStatus.OK
+        );
+    }
 }

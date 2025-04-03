@@ -3,6 +3,7 @@ package com.integradora.AssetTrackerUtez.inventarioLevantado.control;
 import com.integradora.AssetTrackerUtez.edificio.model.EdificioDTO;
 import com.integradora.AssetTrackerUtez.espacio.control.EspacioService;
 import com.integradora.AssetTrackerUtez.inventarioLevantado.model.InventarioLevantadoDTO;
+import com.integradora.AssetTrackerUtez.utils.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +45,11 @@ public class InventarioLevantadoController {
     public long getNumeroDeEdificios() {
         return inventarioLevantadoService.contarInventarios();
     }
+    @PostMapping("/duplicate")
+    public ResponseEntity<Message> duplicateLast() {
+        return inventarioLevantadoService.duplicateLast();
+    }
+
 
 
 }
