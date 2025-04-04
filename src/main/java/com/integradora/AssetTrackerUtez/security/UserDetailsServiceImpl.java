@@ -28,6 +28,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Usuario user = usuarioRepository.findFirstByCorreo(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
+        //Bloquea el inicio de sesión si el usuario está inactivo
+        if (!user.isEstado()) {
+            throw new RuntimeException("La cuenta del usuario está inactiva");
+        }
         return new org.springframework.security.core.userdetails.User(
                 user.getCorreo(),
                 user.getContrasena(),
