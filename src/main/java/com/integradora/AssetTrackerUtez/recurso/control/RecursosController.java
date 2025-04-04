@@ -35,4 +35,9 @@ public class RecursosController {
     public ResponseEntity<Object> getEspaciosPorEdificio(@PathVariable Long idInventario) {
         return recursosService.findByEspacioId(idInventario);
     }
+    @GetMapping("/porcentaje-categorias")
+    public ResponseEntity<Object> getPorcentajesPorCategoria() {
+        return recursosService.getPorcentajeRecursosPorCategoria();
+    }
+
 }

@@ -90,6 +90,14 @@ public class Recurso {
         this.urlImagen = urlImagen;
     }
 
+    public CategoriaRecurso getCategoriaRecurso() {
+        return categoriaRecurso;
+    }
+
+    public void setCategoriaRecurso(CategoriaRecurso categoriaRecurso) {
+        this.categoriaRecurso = categoriaRecurso;
+    }
+
     public String getCodigo() {
         return codigo;
     }

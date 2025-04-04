@@ -169,4 +169,53 @@ public class RecursosService {
         return  recursosRepository.count();
     }
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> getPorcentajeRecursosPorCategoria() {
+        List<Recurso> recursos = recursosRepository.findByStatus(true);
+
+        if (recursos.isEmpty()) {
+            logger.info("No se encontraron recursos activos");
+            return new ResponseEntity<>(new Message(null, "No hay recursos activos", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+        }
+
+        // Total de recursos activos
+        Long total = recursosRepository.count();
+        logger.info("Total de recursos activos: {}", total);
+
+        // Agrupar y contar por categoría
+        Map<String, Long> conteoPorCategoria = recursos.stream()
+                .filter(r -> r.getCategoriaRecurso() != null && r.getCategoriaRecurso().getNombre() != null)
+                .collect(
+                        java.util.stream.Collectors.groupingBy(
+                                r -> r.getCategoriaRecurso().getNombre(),
+                                java.util.stream.Collectors.counting()
+                        )
+                );
+
+        // Log de categorías agrupadas
+        logger.info("Conteo por categoría: {}", conteoPorCategoria);
+
+        // Crear la estructura de respuesta con el porcentaje
+        List<Map<String, Object>> respuesta = conteoPorCategoria.entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> map = new java.util.HashMap<>();
+                    map.put("categoria", entry.getKey());
+
+                    // Calculamos el porcentaje de recursos por categoría
+                    long categoriaCount = entry.getValue();
+                    double porcentaje = Math.round((categoriaCount * 100.0) / total);
+                    map.put("porcentaje", porcentaje);
+
+                    logger.info("Categoría: {} - Recursos: {} - Porcentaje: {}", entry.getKey(), categoriaCount, porcentaje);
+                    return map;
+                }).collect(java.util.stream.Collectors.toList());
+
+        // Log de la respuesta final
+        logger.info("Respuesta final: {}", respuesta);
+
+        return new ResponseEntity<>(new Message(respuesta, "Porcentaje de recursos por categoría", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
+
+
 }

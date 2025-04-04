@@ -118,4 +118,12 @@ public class CategoriaRecurso {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public List<Recurso> getRecursos() {
+        return recursos;
+    }
+
+    public void setRecursos(List<Recurso> recursos) {
+        this.recursos = recursos;
+    }
 }

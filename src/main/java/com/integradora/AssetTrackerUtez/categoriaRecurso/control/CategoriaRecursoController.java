@@ -45,5 +45,10 @@ public class CategoriaRecursoController {
     public ResponseEntity<Object> changeStatus(@Validated(CategoriaRecursoDTO.ChangeStatus.class) @RequestBody CategoriaRecursoDTO dto){
         return categoriaRecursoService.changeStatus(dto);
     }
+    @GetMapping("/porcentaje-categorias")
+    public ResponseEntity<Object> getPorcentajesPorCategoria() {
+        return categoriaRecursoService.getPorcentajeRecursosPorCategoria();
+    }
+
 
 }

@@ -6,6 +6,7 @@ import com.integradora.AssetTrackerUtez.categoriaRecurso.model.CategoriaRecursoD
 import com.integradora.AssetTrackerUtez.categoriaRecurso.model.CategoriaRecursoRepository;
 import com.integradora.AssetTrackerUtez.edificio.model.Edificio;
 import com.integradora.AssetTrackerUtez.edificio.model.EdificioDTO;
+import com.integradora.AssetTrackerUtez.recurso.model.Recurso;
 import com.integradora.AssetTrackerUtez.utils.Message;
 import com.integradora.AssetTrackerUtez.utils.TypesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -190,5 +194,48 @@ public class CategoriaRecursoService {
         // Capitaliza solo la primera letra y mantiene el resto igual
         return texto.substring(0, 1).toUpperCase() + texto.substring(1);
     }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> getPorcentajeRecursosPorCategoria() {
+        // Obtener todas las categorías activas
+        List<CategoriaRecurso> categorias = categoriaRecursoRepository.findAllByStatusOrderByNombre(true);
+
+        // Si no hay categorías activas, devolver mensaje de advertencia
+        if (categorias.isEmpty()) {
+            return new ResponseEntity<>(new Message(null, "No hay categorías de recursos activas", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+        }
+
+        // Obtener la lista de recursos activos
+        List<Recurso> recursosActivos = categorias.stream()
+                .flatMap(c -> c.getRecursos().stream())
+                .filter(r -> r.isStatus()) // Filtrar recursos activos
+                .collect(Collectors.toList());
+
+        // Si no hay recursos activos, devolver mensaje de advertencia
+        if (recursosActivos.isEmpty()) {
+            return new ResponseEntity<>(new Message(null, "No hay recursos activos", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+        }
+
+        // Total de recursos activos
+        int totalRecursosActivos = recursosActivos.size();
+
+        // Agrupar recursos por categoría y contar por categoría
+        Map<String, Long> conteoPorCategoria = recursosActivos.stream()
+                .collect(Collectors.groupingBy(r -> r.getCategoriaRecurso().getNombre(), Collectors.counting()));
+
+        // Crear la respuesta con el porcentaje de recursos por categoría
+        List<Map<String, Object>> respuesta = conteoPorCategoria.entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("categoria", entry.getKey());
+                    map.put("porcentaje", Math.round((entry.getValue() * 100.0) / totalRecursosActivos));
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        // Devolver la respuesta
+        return new ResponseEntity<>(new Message(respuesta, "Porcentaje de recursos por categoría", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
 
 }
