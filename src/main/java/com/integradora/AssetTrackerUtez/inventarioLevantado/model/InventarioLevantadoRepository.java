@@ -12,4 +12,6 @@ public interface InventarioLevantadoRepository extends JpaRepository<InventarioL
 
     List<InventarioLevantado> findAllByStatus(boolean status);
     long count();
+
+    List<InventarioLevantado> findAllByEspacioId(Long idEspacio);
 }

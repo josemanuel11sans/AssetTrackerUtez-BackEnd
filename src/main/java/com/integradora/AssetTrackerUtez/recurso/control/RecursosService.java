@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -152,6 +153,15 @@ public class RecursosService {
         }
 
         return new ResponseEntity<>(new Message(recurso,"Recurso guardado", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> findByEspacioId(Long idInventario) {
+        List<Recurso> recursos = recursosRepository.findAllByInventarioLevantadoId(idInventario);
+        if (recursos.isEmpty()) {
+            return new ResponseEntity<>(new Message(null, "No se encontraron recursos para este inventario", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(new Message(recursos, "Recursos encontrados", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = {SQLException.class})

@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface RecursosRepository extends JpaRepository<Recurso, Long> {
     List<Recurso> findByStatus(boolean status);
-
+    List<Recurso> findAllByInventarioLevantadoId(Long idInventario);
     Optional<Recurso> findById(Long id);
     long count();
 }

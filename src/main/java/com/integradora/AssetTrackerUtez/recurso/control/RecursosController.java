@@ -30,4 +30,9 @@ public class RecursosController {
     public long getNumeroDeEdificios() {
         return recursosService.contarRecursos();
     }
+
+    @GetMapping("/inventario/{idInventario}")
+    public ResponseEntity<Object> getEspaciosPorEdificio(@PathVariable Long idInventario) {
+        return recursosService.findByEspacioId(idInventario);
+    }
 }

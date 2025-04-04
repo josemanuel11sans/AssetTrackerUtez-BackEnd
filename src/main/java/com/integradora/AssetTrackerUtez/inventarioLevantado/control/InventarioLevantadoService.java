@@ -92,6 +92,17 @@ public class InventarioLevantadoService {
     public  ResponseEntity<Object> disable(){
         return new ResponseEntity<>(new Message(inventarioLevantadoRepository.findAllByStatus(false), "Listado de invatarios inactivos", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> findByEspacioId(Long idEspacio) {
+        List<InventarioLevantado> inventarioLevantados = inventarioLevantadoRepository.findAllByEspacioId(idEspacio);
+
+        if (inventarioLevantados.isEmpty()) {
+            return new ResponseEntity<>(new Message(null, "No se encontraron inventarios para este edificio", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new Message(inventarioLevantados, "Espacios encontrados", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
     @Transactional(rollbackFor = {SQLException.class})
     public long contarInventarios(){
         return  inventarioLevantadoRepository.count();

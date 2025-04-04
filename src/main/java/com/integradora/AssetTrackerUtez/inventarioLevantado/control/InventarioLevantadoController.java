@@ -40,6 +40,11 @@ public class InventarioLevantadoController {
         return inventarioLevantadoService.changeStatus(dto);
     }
 
+    @GetMapping("/espacio/{idInventario}")
+    public ResponseEntity<Object> getEspaciosPorEdificio(@PathVariable Long idInventario) {
+        return inventarioLevantadoService.findByEspacioId(idInventario);
+    }
+
     @GetMapping("/count")
     public long getNumeroDeEdificios() {
         return inventarioLevantadoService.contarInventarios();
