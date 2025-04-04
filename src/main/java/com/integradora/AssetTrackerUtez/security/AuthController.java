@@ -44,6 +44,9 @@ public class AuthController {
 
         Usuario user = usuarioRepository.findFirstByCorreo(authRequest.getCorreo())
                 .orElseThrow(() -> new Exception("Usuario no encontrado"));
+        if (!user.isEstado()) {
+            throw new Exception("Tu cuenta aún no ha sido activada");
+        }
         // Obtener el rol del usuario
         String role = user.getRol().iterator().next().getNombre();
 
