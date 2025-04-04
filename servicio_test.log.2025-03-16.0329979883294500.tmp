@@ -1,0 +1,38 @@
+2025-03-16T14:32:17.895-06:00  INFO 12908 --- [AssetTrackerUtez] [main] c.i.A.AssetTrackerUtezApplication        : Starting AssetTrackerUtezApplication using Java 21.0.3 with PID 12908 (E:\USB\5toCuatri\AssetTracker\Repositorios\AssetTrackerUtez-BackEnd\target\classes started by rocit in E:\USB\5toCuatri\AssetTracker\Repositorios\AssetTrackerUtez-BackEnd)
+2025-03-16T14:32:17.918-06:00  INFO 12908 --- [AssetTrackerUtez] [main] c.i.A.AssetTrackerUtezApplication        : No active profile set, falling back to 1 default profile: "default"
+2025-03-16T14:32:19.183-06:00  INFO 12908 --- [AssetTrackerUtez] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-03-16T14:32:19.361-06:00  INFO 12908 --- [AssetTrackerUtez] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 151 ms. Found 11 JPA repository interfaces.
+2025-03-16T14:32:20.297-06:00  INFO 12908 --- [AssetTrackerUtez] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-03-16T14:32:20.322-06:00  INFO 12908 --- [AssetTrackerUtez] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-16T14:32:20.323-06:00  INFO 12908 --- [AssetTrackerUtez] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.34]
+2025-03-16T14:32:20.426-06:00  INFO 12908 --- [AssetTrackerUtez] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-16T14:32:20.428-06:00  INFO 12908 --- [AssetTrackerUtez] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2428 ms
+2025-03-16T14:32:20.686-06:00  INFO 12908 --- [AssetTrackerUtez] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-03-16T14:32:20.781-06:00  INFO 12908 --- [AssetTrackerUtez] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.5.Final
+2025-03-16T14:32:20.845-06:00  INFO 12908 --- [AssetTrackerUtez] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-03-16T14:32:21.374-06:00  INFO 12908 --- [AssetTrackerUtez] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-03-16T14:32:21.429-06:00  INFO 12908 --- [AssetTrackerUtez] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-03-16T14:32:22.048-06:00  INFO 12908 --- [AssetTrackerUtez] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4cd5fc46
+2025-03-16T14:32:22.052-06:00  INFO 12908 --- [AssetTrackerUtez] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-03-16T14:32:22.141-06:00  WARN 12908 --- [AssetTrackerUtez] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-03-16T14:32:22.143-06:00  WARN 12908 --- [AssetTrackerUtez] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-03-16T14:32:22.172-06:00  INFO 12908 --- [AssetTrackerUtez] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-03-16T14:32:24.385-06:00  INFO 12908 --- [AssetTrackerUtez] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-03-16T14:32:25.093-06:00  INFO 12908 --- [AssetTrackerUtez] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-03-16T14:32:26.006-06:00  INFO 12908 --- [AssetTrackerUtez] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-03-16T14:32:27.099-06:00  INFO 12908 --- [AssetTrackerUtez] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userDetailsServiceImpl
+2025-03-16T14:32:27.166-06:00  WARN 12908 --- [AssetTrackerUtez] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-03-16T14:32:28.307-06:00  INFO 12908 --- [AssetTrackerUtez] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-03-16T14:32:28.323-06:00  INFO 12908 --- [AssetTrackerUtez] [main] c.i.A.AssetTrackerUtezApplication        : Started AssetTrackerUtezApplication in 11.142 seconds (process running for 12.247)
+2025-03-16T14:34:36.242-06:00  INFO 12908 --- [AssetTrackerUtez] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-16T14:34:36.250-06:00  INFO 12908 --- [AssetTrackerUtez] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-16T14:34:36.262-06:00  INFO 12908 --- [AssetTrackerUtez] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-03-16T14:34:36.265-06:00  INFO 12908 --- [AssetTrackerUtez] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-03-16T14:34:36.305-06:00  INFO 12908 --- [AssetTrackerUtez] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

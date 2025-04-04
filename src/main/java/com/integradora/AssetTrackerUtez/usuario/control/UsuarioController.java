@@ -66,4 +66,8 @@ public class UsuarioController {
     public ResponseEntity<Message> changePasswordUser(@RequestBody UsuarioDto usuarioDto){
         return usuarioService.cambiarContraGral(usuarioDto);
     }
+    @PostMapping("/send-email")
+    public ResponseEntity<Object> sendEmail(@Validated({UsuarioDto.FindByEmail.class}) @RequestBody UsuarioDto dto){
+        return usuarioService.sendEmail(dto);
+    }
 }
