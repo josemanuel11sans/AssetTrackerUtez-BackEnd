@@ -44,12 +44,12 @@ public class Recurso {
 
     @Column(name = "status", columnDefinition = "BOOL DEFAULT TRUE")
     private boolean status = true;
-
+   /*
     @Column(name = "urlImagen", columnDefinition = "VARCHAR(255)")
     private String urlImagen;
     @Column(name = "publicid", columnDefinition = "VARCHAR(255)")
     private String publicId;
-
+*/
     //Este campo no tiene ni getter ni setter
     @Column(name = "create_at",columnDefinition = "TIMESTAMP DEFAULT NOW()")
     @Temporal(TemporalType.TIMESTAMP)
@@ -75,7 +75,7 @@ public class Recurso {
 
 
 
-    public Recurso(String codigo, String descripcion, String marca, String modelo, String numeroSerie, String observaciones, boolean status, InventarioLevantado inventarioLevantado, CategoriaRecurso categoriaRecurso, Responsable responsable, String urlImagen, String publicId) {
+    public Recurso(String codigo, String descripcion, String marca, String modelo, String numeroSerie, String observaciones, boolean status, InventarioLevantado inventarioLevantado, CategoriaRecurso categoriaRecurso, Responsable responsable) {
         this.codigo = codigo;
         this.descripcion = descripcion;
         this.marca = marca;
@@ -86,8 +86,8 @@ public class Recurso {
         this.inventarioLevantado = inventarioLevantado;
         this.categoriaRecurso = categoriaRecurso;
         this.responsable = responsable;
-        this.publicId = publicId;
-        this.urlImagen = urlImagen;
+        //this.publicId = publicId;
+        //this.urlImagen = urlImagen;
     }
 
     public CategoriaRecurso getCategoriaRecurso() {

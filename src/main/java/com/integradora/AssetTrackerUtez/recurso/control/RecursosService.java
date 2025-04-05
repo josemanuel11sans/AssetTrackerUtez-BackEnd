@@ -51,7 +51,7 @@ public class RecursosService {
     }
 
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<Object> save(RecursosDTO dto, MultipartFile file){
+    public ResponseEntity<Object> save(RecursosDTO dto){
         // Validación de descripción
         if(dto.getDescripcion() != null) {
             if(dto.getDescripcion().length() < 3){
@@ -123,11 +123,11 @@ public class RecursosService {
         if (responsable == null){
             return new ResponseEntity<>(new Message("El responsable no existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-
+        /*
         Map<String, String> uploadResult =  cloudinaryService.uploadFile(file);
         String imagenUrl = uploadResult.get("url");
         String publicId = uploadResult.get("public_id");
-
+        */
 
 
         // Creación del nuevo recurso
@@ -141,9 +141,9 @@ public class RecursosService {
                 true,
                 inventarioLevantado,
                 categoriaRecurso,
-                responsable,
-                publicId,
-                imagenUrl
+                responsable//,
+                //publicId,
+               // imagenUrl
         );
 
         // Guardar el recurso
@@ -152,7 +152,7 @@ public class RecursosService {
             return new ResponseEntity<>(new Message("Error al guardar el recurso", TypesResponse.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(new Message(recurso,"Recurso guardado", TypesResponse.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(new Message("null","Recurso guardado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)

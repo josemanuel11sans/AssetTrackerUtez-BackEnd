@@ -23,8 +23,8 @@ public class RecursosController {
         return recursosService.finfAll();
     }
     @PostMapping("/save")
-    public  ResponseEntity<Object> save(@Validated(RecursosDTO.Register.class) @ModelAttribute RecursosDTO dto, @RequestParam(value = "file", required = false) MultipartFile file){
-        return  recursosService.save(dto,file);
+    public  ResponseEntity<Object> save(@Validated(RecursosDTO.Register.class) @RequestBody RecursosDTO dto){
+        return  recursosService.save(dto);
     }
     @GetMapping("/count")
     public long getNumeroDeEdificios() {
