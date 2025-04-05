@@ -1,5 +1,6 @@
 package com.integradora.AssetTrackerUtez.categoriaRecurso.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.integradora.AssetTrackerUtez.recurso.model.Recurso;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -42,6 +43,7 @@ public class CategoriaRecurso {
     private Date fechaActualizacion;
 
     @OneToMany(mappedBy = "categoriaRecurso")
+    @JsonIgnore
     private List<Recurso> recursos;
 
     public CategoriaRecurso() {

@@ -1,5 +1,6 @@
 package com.integradora.AssetTrackerUtez.responsable.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.integradora.AssetTrackerUtez.recurso.model.Recurso;
 import jakarta.persistence.*;
@@ -40,6 +41,7 @@ public class Responsable {
     private Date ultimaActualizacion;
 
     @OneToMany(mappedBy = "responsable")
+    @JsonIgnore
     private List<Recurso> recursos;
 
     public Responsable() {
