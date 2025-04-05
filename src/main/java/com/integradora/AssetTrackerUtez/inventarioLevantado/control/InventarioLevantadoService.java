@@ -82,7 +82,7 @@ public class InventarioLevantadoService {
             return new ResponseEntity<>(new Message("Error al crear el inventario: " + e.getMessage(), TypesResponse.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         // Retornar respuesta exitosa
-        return new ResponseEntity<>(new Message("Inventario Creado", TypesResponse.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(inventarioLevantado,"Inventario Creado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = {Exception.class})
