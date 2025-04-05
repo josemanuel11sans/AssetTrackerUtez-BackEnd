@@ -67,6 +67,7 @@ public class SecurityConfig {
                                 "inventariosLevantados/all",
                                 "inventariosLevantados/all/enable",
                                 "inventariosLevantados/all/disable",
+                                "inventariosLevantados/{id}",
                                 "inventariosLevantados/save",
                                 "inventariosLevantados/status",
                                 "inventariosLevantados/duplicate",

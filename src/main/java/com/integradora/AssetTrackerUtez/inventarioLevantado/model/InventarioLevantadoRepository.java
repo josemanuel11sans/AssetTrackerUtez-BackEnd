@@ -15,6 +15,7 @@ public interface InventarioLevantadoRepository extends JpaRepository<InventarioL
     Optional<InventarioLevantado> findFirstByOrderByFechaCreacionDesc();
 
     long count();
+    Optional<InventarioLevantado> findById(Long id);
 
     List<InventarioLevantado> findAllByEspacioId(Long idEspacio);
 }

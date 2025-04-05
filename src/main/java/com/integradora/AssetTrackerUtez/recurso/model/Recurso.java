@@ -162,6 +162,14 @@ public class Recurso {
 
     }
 
+    public InventarioLevantado getInventarioLevantado() {
+        return inventarioLevantado;
+    }
+
+    public Responsable getResponsable() {
+        return responsable;
+    }
+
     public void setInventarioLevantado(InventarioLevantado inv) {
     }
 }

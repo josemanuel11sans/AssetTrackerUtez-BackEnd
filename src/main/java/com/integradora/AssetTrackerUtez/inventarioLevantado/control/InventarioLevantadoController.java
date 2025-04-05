@@ -32,6 +32,10 @@ public class InventarioLevantadoController {
     public ResponseEntity<Object> disable(){
         return inventarioLevantadoService.disable();
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> findById(@PathVariable Long id) {
+        return inventarioLevantadoService.findById(id);
+    }
 
     @PostMapping("/save")
     public  ResponseEntity<Object> save(@Validated(InventarioLevantadoDTO.Register.class) @RequestBody InventarioLevantadoDTO dto){

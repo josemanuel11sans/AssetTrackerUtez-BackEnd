@@ -7,6 +7,8 @@ import com.integradora.AssetTrackerUtez.espacio.model.EspacioRepository;
 import com.integradora.AssetTrackerUtez.inventarioLevantado.model.InventarioLevantado;
 import com.integradora.AssetTrackerUtez.inventarioLevantado.model.InventarioLevantadoDTO;
 import com.integradora.AssetTrackerUtez.inventarioLevantado.model.InventarioLevantadoRepository;
+import com.integradora.AssetTrackerUtez.recurso.model.Recurso;
+import com.integradora.AssetTrackerUtez.recurso.model.RecursosRepository;
 import com.integradora.AssetTrackerUtez.utils.Message;
 import com.integradora.AssetTrackerUtez.utils.TypesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +39,8 @@ public class InventarioLevantadoService {
     private EspacioRepository espacioRepository;
 
     @Autowired
+    private RecursosRepository recursosRepository;
+    @Autowired
     public InventarioLevantadoService(InventarioLevantadoRepository inventarioLevantadoRepository){
         this.inventarioLevantadoRepository = inventarioLevantadoRepository;
     }
@@ -46,6 +51,13 @@ public class InventarioLevantadoService {
     public ResponseEntity<Object> findAll() {
         List<InventarioLevantado> inventarios = inventarioLevantadoRepository.findAllWithEspacioYRecursos();
         return new ResponseEntity<>(new Message(inventarios, "Listado de inventarios", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> findById(Long id) {
+        if (!inventarioLevantadoRepository.existsById(id)){
+            return new ResponseEntity<>(new Message(null, "Inventario no encontrado", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(new Message(inventarioLevantadoRepository.findById(id), "Inventario encontrado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
     //save
     @Transactional(rollbackFor = {SQLException.class})
@@ -143,10 +155,8 @@ public class InventarioLevantadoService {
     }
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Message> duplicateLast() {
-        // Obtener el último inventario creado
         Optional<InventarioLevantado> ultimoInventarioOpt = inventarioLevantadoRepository.findFirstByOrderByFechaCreacionDesc();
 
-        // Validar si existe un inventario previamente creado
         if (ultimoInventarioOpt.isEmpty()) {
             return new ResponseEntity<>(
                     new Message("No se encontró ningún inventario para duplicar", TypesResponse.WARNING),
@@ -156,31 +166,41 @@ public class InventarioLevantadoService {
 
         InventarioLevantado ultimoInventario = ultimoInventarioOpt.get();
 
-        // Crear el nuevo inventario duplicando los datos del último
+        // Crear nuevo inventario
         InventarioLevantado inventarioDuplicado = new InventarioLevantado(
                 true,
-                ultimoInventario.getEspacio() // Espacio del último inventario
+                ultimoInventario.getEspacio()
         );
 
-        // Duplicar otros atributos que sean necesarios
-        inventarioDuplicado.setRecursos(ultimoInventario.getRecursos()); // Si tiene una lista de recursos
+        // Guardar el nuevo inventario primero
+        inventarioLevantadoRepository.save(inventarioDuplicado);
 
+        // Clonar recursos
+        List<Recurso> recursosDuplicados = new ArrayList<>();
+        for (Recurso recursoOriginal : ultimoInventario.getRecursos()) {
+            Recurso nuevoRecurso = new Recurso();
+            nuevoRecurso.setCodigo(recursoOriginal.getCodigo());
+            nuevoRecurso.setDescripcion(recursoOriginal.getDescripcion());
+            nuevoRecurso.setMarca(recursoOriginal.getMarca());
+            nuevoRecurso.setModelo(recursoOriginal.getModelo());
+            nuevoRecurso.setObservaciones(recursoOriginal.getObservaciones());
+            nuevoRecurso.setCategoriaRecurso(recursoOriginal.getCategoriaRecurso());
+            nuevoRecurso.setResponsable(recursoOriginal.getResponsable());
+            nuevoRecurso.setStatus(recursoOriginal.isStatus());
+            nuevoRecurso.setInventarioLevantado(inventarioDuplicado); // Relación
 
-        try {
-            // Guardar el inventario duplicado en la base de datos
-            inventarioLevantadoRepository.saveAndFlush(inventarioDuplicado);
-        } catch (Exception e) {
-            // Manejo de errores
-            return new ResponseEntity<>(
-                    new Message("Error al duplicar el inventario: " + e.getMessage(), TypesResponse.ERROR),
-                    HttpStatus.BAD_REQUEST
-            );
+            recursosDuplicados.add(nuevoRecurso);
         }
 
-        // Respuesta exitosa
+        // Guardar los recursos clonados
+        for (Recurso recurso : recursosDuplicados) {
+            recursosRepository.save(recurso);
+        }
+
         return new ResponseEntity<>(
                 new Message("Inventario duplicado exitosamente", TypesResponse.SUCCESS),
                 HttpStatus.OK
         );
     }
+
 }
