@@ -10,4 +10,5 @@ public interface RecursosRepository extends JpaRepository<Recurso, Long> {
     List<Recurso> findAllByInventarioLevantadoId(Long idInventario);
     Optional<Recurso> findById(Long id);
     long count();
+    Optional<Recurso> findFirstByCodigoOrderByFechaCreacionDesc(String codigo);
 }

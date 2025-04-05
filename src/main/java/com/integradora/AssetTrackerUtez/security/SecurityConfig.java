@@ -60,6 +60,7 @@ public class SecurityConfig {
                                 "responsables/changeStatus",
                                 //recursos
                                 "recursos/all",
+                                "recursos/{codigo}",
                                 "recursos/save",
                                 "recursos/update",
                                 "recursos/inventario/{idInventario}",
@@ -153,6 +154,7 @@ public class SecurityConfig {
                                 "categoriasRecursos/save",
                                 "categoriasRecursos/status",
                                 "categoriasRecursos/porcentaje-categorias",
+                                "categoriasRecursos/update",
                                 //categorias de espacios
                                 "categoriasRecursos/all", "categoriasEspacios/{id}",
                                 "categoriasEspacios/actives", "categoriasEspacios/save",

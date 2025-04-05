@@ -2,6 +2,7 @@ package com.integradora.AssetTrackerUtez.recurso.control;
 
 import com.integradora.AssetTrackerUtez.inventarioLevantado.model.InventarioLevantadoDTO;
 import com.integradora.AssetTrackerUtez.recurso.model.RecursosDTO;
+import com.integradora.AssetTrackerUtez.utils.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +23,11 @@ public class RecursosController {
     public ResponseEntity<Object> findAll(){
         return recursosService.finfAll();
     }
+    @GetMapping("/{codigo}")
+    public ResponseEntity<Message> findByCodigo( @PathVariable String codigo){
+        return recursosService.findByCodigo(codigo);
+    }
+
     @PostMapping("/save")
     public  ResponseEntity<Object> save(@Validated(RecursosDTO.Register.class) @RequestBody RecursosDTO dto){
         return  recursosService.save(dto);

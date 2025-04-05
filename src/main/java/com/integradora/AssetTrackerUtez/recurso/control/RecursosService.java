@@ -50,6 +50,18 @@ public class RecursosService {
     public ResponseEntity<Object> finfAll(){
         return  new ResponseEntity<>(new Message(recursosRepository.findAll(), "Listado de recursos", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+    @Transactional(readOnly = true)
+        public ResponseEntity<Message> findByCodigo(String codigo) {
+            Optional<Recurso> recurso = recursosRepository.findFirstByCodigoOrderByFechaCreacionDesc(codigo);
+            if (recurso.isPresent()) {
+                Message message = new Message(recurso.get(), "Recurso encontrado", TypesResponse.SUCCESS);
+                return new ResponseEntity<>(message, HttpStatus.OK);
+            } else {
+                Message message = new Message(null, "Recurso no encontrado", TypesResponse.WARNING);
+                return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+            }
+        }
+
 
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> save(RecursosDTO dto){
