@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -154,6 +155,91 @@ public class RecursosService {
 
         return new ResponseEntity<>(new Message("null","Recurso guardado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<Object> update(RecursosDTO dto) {
+        Optional<Recurso> optionalRecurso = recursosRepository.findById(dto.getId());
+        if (optionalRecurso.isEmpty()) {
+            return new ResponseEntity<>(new Message("El recurso no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
+        }
+
+        Recurso recurso = optionalRecurso.get();
+
+        // Descripción
+        if (dto.getDescripcion() != null) {
+            if (dto.getDescripcion().length() < 3 || dto.getDescripcion().length() > 255) {
+                return new ResponseEntity<>(new Message("La descripción debe tener entre 3 y 255 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            recurso.setDescripcion(dto.getDescripcion().trim());
+        }
+
+        // Marca
+        if (dto.getMarca() != null) {
+            if (dto.getMarca().length() < 3 || dto.getMarca().length() > 255) {
+                return new ResponseEntity<>(new Message("La marca debe tener entre 3 y 255 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            recurso.setMarca(dto.getMarca().trim());
+        }
+
+        // Modelo
+        if (dto.getModelo() != null) {
+            if (dto.getModelo().length() < 1 || dto.getModelo().length() > 255) {
+                return new ResponseEntity<>(new Message("El modelo debe tener entre 1 y 255 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            recurso.setModelo(dto.getModelo().trim());
+        }
+
+        // Número de serie
+        if (dto.getNumeroSerie() != null) {
+            if (dto.getNumeroSerie().length() < 3 || dto.getNumeroSerie().length() > 255) {
+                return new ResponseEntity<>(new Message("El número de serie debe tener entre 3 y 255 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            recurso.setNumeroSerie(dto.getNumeroSerie().trim());
+        }
+
+        // Observaciones
+        if (dto.getObservaciones() != null) {
+            if (dto.getObservaciones().length() < 3 || dto.getObservaciones().length() > 255) {
+                return new ResponseEntity<>(new Message("Las observaciones deben tener entre 3 y 255 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            recurso.setObservaciones(dto.getObservaciones().trim());
+        }
+
+        // Código (si quieres permitir editarlo)
+        if (dto.getCodigo() != null && !dto.getCodigo().isBlank()) {
+            recurso.setCodigo(dto.getCodigo().trim());
+        }
+
+        // Relaciones: solo si se mandan nuevos IDs
+        if (dto.getInvetariolevantadoid() != 0) {
+            InventarioLevantado inv = inventarioLevantadoRepository.findById((long) dto.getInvetariolevantadoid()).orElse(null);
+            if (inv == null) {
+                return new ResponseEntity<>(new Message("El inventario no existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            recurso.setInventarioLevantado(inv);
+        }
+
+        if (dto.getCategoriaRecursoid() != 0) {
+            CategoriaRecurso cat = categoriaRecursoRepository.findById((long) dto.getCategoriaRecursoid()).orElse(null);
+            if (cat == null) {
+                return new ResponseEntity<>(new Message("La categoría no existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            recurso.setCategoriaRecurso(cat);
+        }
+
+        if (dto.getResponsableid() != 0) {
+            Responsable resp = responsableRepository.findById((long) dto.getResponsableid()).orElse(null);
+            if (resp == null) {
+                return new ResponseEntity<>(new Message("El responsable no existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            recurso.setResponsable(resp);
+        }
+
+        // Guardar cambios
+        recurso = recursosRepository.saveAndFlush(recurso);
+        return new ResponseEntity<>(new Message(recurso, "Recurso actualizado correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
 
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findByEspacioId(Long idInventario) {

@@ -26,6 +26,11 @@ public class RecursosController {
     public  ResponseEntity<Object> save(@Validated(RecursosDTO.Register.class) @RequestBody RecursosDTO dto){
         return  recursosService.save(dto);
     }
+
+    @PutMapping("/update")
+    public  ResponseEntity<Object> update(@Validated(RecursosDTO.Register.class) @RequestBody RecursosDTO dto){
+        return  recursosService.update(dto);
+    }
     @GetMapping("/count")
     public long getNumeroDeEdificios() {
         return recursosService.contarRecursos();

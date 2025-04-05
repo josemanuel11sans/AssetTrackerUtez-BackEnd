@@ -1,5 +1,4 @@
 package com.integradora.AssetTrackerUtez.inventarioLevantado.model;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class InventarioLevantadoDTO {
@@ -17,7 +16,7 @@ public class InventarioLevantadoDTO {
         this.espacio = espacio;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

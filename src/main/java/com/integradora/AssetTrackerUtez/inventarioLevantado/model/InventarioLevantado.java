@@ -30,6 +30,11 @@ public class InventarioLevantado {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
 
+    @Column(name = "imagenurl", columnDefinition = "VARCHAR(255)")
+    private String imagenUrl;
+    //publicId
+    @Column(name = "publicid", columnDefinition = "VARCHAR(255)")
+    private String publicId;
 
     //este es el espacio
     @ManyToOne
@@ -45,7 +50,30 @@ public class InventarioLevantado {
         this.espacio = espacio;
     }
 
+    public InventarioLevantado(boolean status, Espacio espacio, String publicId, String imagenUrl) {
+        this.status = status;
+        this.espacio = espacio;
+        this.publicId = publicId;
+        this.imagenUrl = imagenUrl;
+    }
+
     public InventarioLevantado() {
+    }
+
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
+
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
     }
 
     public boolean isStatus() {

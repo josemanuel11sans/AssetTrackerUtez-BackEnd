@@ -41,6 +41,12 @@ public class CategoriaRecursoController {
         return categoriaRecursoService.save(dto,file);
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<Object> update(@ModelAttribute CategoriaRecursoDTO dto, @RequestParam("file") MultipartFile file){
+        return categoriaRecursoService.update(dto,file);
+    }
+
+
     @PutMapping("/status")
     public ResponseEntity<Object> changeStatus(@Validated(CategoriaRecursoDTO.ChangeStatus.class) @RequestBody CategoriaRecursoDTO dto){
         return categoriaRecursoService.changeStatus(dto);

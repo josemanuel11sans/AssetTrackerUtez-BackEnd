@@ -52,16 +52,25 @@ public class SecurityConfig {
                                 "usuarios/change-password",
                                 "usuarios/change-password-gral",
                                 //responsables
+                                "responsables/all",
+                                "responsables/{id}",
                                 "responsables/actives",
+                                "responsables/save",
+                                "responsables/update",
+                                "responsables/changeStatus",
                                 //recursos
                                 "recursos/all",
                                 "recursos/save",
+                                "recursos/update",
+                                "recursos/inventario/{idInventario}",
                                 //inventario levantado
                                 "inventariosLevantados/all",
                                 "inventariosLevantados/all/enable",
                                 "inventariosLevantados/all/disable",
                                 "inventariosLevantados/save",
                                 "inventariosLevantados/status",
+                                "inventariosLevantados/duplicate",
+                                "inventariosLevantados/espacio/{idInventario}",
                                 //espacios
                                 "espacios/all/enable",
                                 "espacios/all",
@@ -76,6 +85,9 @@ public class SecurityConfig {
                                 "categoriasRecursos/all/enable",
                                 "categoriasRecursos/all/disable",
                                 "categoriasRecursos/{id}",
+                                "categoriasRecursos/save",
+                                "categoriasRecursos/update",
+                                "categoriasRecursos/status",
 
                                 //categoria espacios
                                 "categoriasEspacios/all",
@@ -104,6 +116,9 @@ public class SecurityConfig {
                                 //recursos (falta)
                                 "recursos/all",
                                 "recursos/save",
+                                "recursos/count",
+                                "recursos/update",
+                                "recursos/inventario/{idInventario}",
                                 //notificaciones
                                 "notificaciones/all","notificaciones/{id}",
                                 "notificaciones/pendientes",
@@ -116,6 +131,10 @@ public class SecurityConfig {
                                 "inventariosLevantados/save",
                                 "inventariosLevantados/all/enable", "inventariosLevantados/all/disable",
                                 "inventariosLevantados/status",
+                                "inventariosLevantados/update",
+                                "inventariosLevantados/espacio/{idInventario}",
+                                "inventariosLevantados/count",
+                                "inventariosLevantados/duplicate",
                                 //espacios
                                 "espacios/all","espacios/{id}",
                                 "espacios/all/enable", "espacios/all/disable",
@@ -125,13 +144,14 @@ public class SecurityConfig {
                                 "edificios/all",
                                 "edificios/save",
                                 "edificios/all/enable", "edificios/all/disable",
-                                "edificios/status","edificios/update",
+                                "edificios/status","edificios/update","edificios/count",
                                 //categoria de recursos
                                 "categoriasRecursos/all",
                                 "categoriasRecursos/all/enable","categoriasRecursos/all/disable",
                                 "categoriasRecursos/{id}",
                                 "categoriasRecursos/save",
                                 "categoriasRecursos/status",
+                                "categoriasRecursos/porcentaje-categorias",
                                 //categorias de espacios
                                 "categoriasRecursos/all", "categoriasEspacios/{id}",
                                 "categoriasEspacios/actives", "categoriasEspacios/save",

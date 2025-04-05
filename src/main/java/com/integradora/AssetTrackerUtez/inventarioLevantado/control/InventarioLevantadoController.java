@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/inventariosLevantados")
@@ -40,7 +41,10 @@ public class InventarioLevantadoController {
     public ResponseEntity<Object> ChangeStatus(@Validated(InventarioLevantadoDTO.ChangeStatus.class) @RequestBody InventarioLevantadoDTO dto){
         return inventarioLevantadoService.changeStatus(dto);
     }
-
+    @PutMapping("/update")
+    public ResponseEntity<Object> update(@ModelAttribute InventarioLevantadoDTO dto, @RequestParam("file")MultipartFile file){
+        return  inventarioLevantadoService.updateInventario(dto, file);
+    }
     @GetMapping("/espacio/{idInventario}")
     public ResponseEntity<Object> getEspaciosPorEdificio(@PathVariable Long idInventario) {
         return inventarioLevantadoService.findByEspacioId(idInventario);

@@ -1,6 +1,7 @@
 package com.integradora.AssetTrackerUtez.inventarioLevantado.control;
 
 import com.integradora.AssetTrackerUtez.Cloudinary.control.CloudinaryService;
+import com.integradora.AssetTrackerUtez.categoriaRecurso.model.CategoriaRecursoDTO;
 import com.integradora.AssetTrackerUtez.espacio.model.Espacio;
 import com.integradora.AssetTrackerUtez.espacio.model.EspacioRepository;
 import com.integradora.AssetTrackerUtez.inventarioLevantado.model.InventarioLevantado;
@@ -14,9 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -69,6 +72,37 @@ public class InventarioLevantadoService {
         // Retornar respuesta exitosa
         return new ResponseEntity<>(new Message("Inventario Creado", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public ResponseEntity<Object> updateInventario(InventarioLevantadoDTO dto, MultipartFile file) {
+        Optional<InventarioLevantado> optionalInventarioLevantado = inventarioLevantadoRepository.findById(dto.getId());
+
+        if (optionalInventarioLevantado.isEmpty()) {
+            return new ResponseEntity<>(new Message(null, "El inventario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
+        }
+
+        InventarioLevantado inventarioLevantado = optionalInventarioLevantado.get();
+
+        // Validar y subir imagen si se envía
+        if (file != null && !file.isEmpty()) {
+            if (!file.getContentType().startsWith("image/")) {
+                return new ResponseEntity<>(new Message(null, "El archivo debe ser una imagen (JPG, PNG, etc.)", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+            }
+
+            String publicid = inventarioLevantado.getPublicId() != null ? inventarioLevantado.getPublicId() : "inventario/" + inventarioLevantado.getId();
+            Map<String, String> uploadResult = cloudinaryService.uploadFile(file);
+
+            inventarioLevantado.setImagenUrl(uploadResult.get("url"));
+            inventarioLevantado.setPublicId(uploadResult.get("public_id"));
+        }
+
+        // Guardar los cambios
+        inventarioLevantado = inventarioLevantadoRepository.saveAndFlush(inventarioLevantado);
+
+        return new ResponseEntity<>(new Message(inventarioLevantado, "Inventario actualizado correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
+
     //changeStatus
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Object> changeStatus(InventarioLevantadoDTO dto){

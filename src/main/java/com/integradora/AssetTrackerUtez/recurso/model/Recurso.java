@@ -155,4 +155,10 @@ public class Recurso {
     }
 
 
+    public void setResponsable(Responsable resp) {
+
+    }
+
+    public void setInventarioLevantado(InventarioLevantado inv) {
+    }
 }

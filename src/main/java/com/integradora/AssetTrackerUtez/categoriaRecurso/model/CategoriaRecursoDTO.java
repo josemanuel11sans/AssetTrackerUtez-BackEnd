@@ -17,7 +17,7 @@ public class CategoriaRecursoDTO {
     @NotBlank(groups = {EspaciosDTO.Register.class}, message = "Es necesario el public id de la imagen")
     private String publicId;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
