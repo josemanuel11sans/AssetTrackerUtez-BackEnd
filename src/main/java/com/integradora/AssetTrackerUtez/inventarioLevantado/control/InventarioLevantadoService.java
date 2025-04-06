@@ -173,7 +173,11 @@ public class InventarioLevantadoService {
         );
 
         // Guardar el nuevo inventario primero
-        inventarioLevantadoRepository.save(inventarioDuplicado);
+        inventarioDuplicado = inventarioLevantadoRepository.saveAndFlush(inventarioDuplicado);
+        Integer idInventarioCreado = Math.toIntExact(inventarioDuplicado.getId());
+
+        System.out.println("ID generado: " + idInventarioCreado);
+
 
         // Clonar recursos
         List<Recurso> recursosDuplicados = new ArrayList<>();
@@ -183,6 +187,7 @@ public class InventarioLevantadoService {
             nuevoRecurso.setDescripcion(recursoOriginal.getDescripcion());
             nuevoRecurso.setMarca(recursoOriginal.getMarca());
             nuevoRecurso.setModelo(recursoOriginal.getModelo());
+            nuevoRecurso.setNumeroSerie(recursoOriginal.getNumeroSerie());
             nuevoRecurso.setObservaciones(recursoOriginal.getObservaciones());
             nuevoRecurso.setCategoriaRecurso(recursoOriginal.getCategoriaRecurso());
             nuevoRecurso.setResponsable(recursoOriginal.getResponsable());
@@ -193,12 +198,10 @@ public class InventarioLevantadoService {
         }
 
         // Guardar los recursos clonados
-        for (Recurso recurso : recursosDuplicados) {
-            recursosRepository.save(recurso);
-        }
+        recursosRepository.saveAll(recursosDuplicados);
 
         return new ResponseEntity<>(
-                new Message("Inventario duplicado exitosamente", TypesResponse.SUCCESS),
+                new Message(inventarioDuplicado,"Inventario duplicado exitosamente", TypesResponse.SUCCESS),
                 HttpStatus.OK
         );
     }

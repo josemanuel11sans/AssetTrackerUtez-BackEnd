@@ -60,7 +60,7 @@ public class NotificacionRegistroService {
 
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Message> crearNotificacion(NotificacionRegistroDto dto) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(dto.getUsuario().getId());
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById( dto.getUsuario());
         if (!usuarioOptional.isPresent()) {
             return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
@@ -81,20 +81,21 @@ public class NotificacionRegistroService {
     }
 
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<Message> actualizarEstado(Long id, EstadoNotificacion estado, String comentarios, Long administradorId) {
-        Optional<NotificacionRegistro> notificacionOptional = notificacionRegistroRepository.findById(id);
+    //public ResponseEntity<Message> actualizarEstado(Long id, EstadoNotificacion estado, String comentarios, Long usuarioId) {
+    public ResponseEntity<Message> actualizarEstado(NotificacionRegistroDto dto) {
+        Optional<NotificacionRegistro> notificacionOptional = notificacionRegistroRepository.findById(dto.getId());
         if (!notificacionOptional.isPresent()) {
             return new ResponseEntity<>(new Message("La notificación no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
 
         NotificacionRegistro notificacion = notificacionOptional.get();
-        Optional<Usuario> administradorOptional = usuarioRepository.findById(administradorId);
+        Optional<Usuario> administradorOptional = usuarioRepository.findById(dto.getUsuario());
         if (!administradorOptional.isPresent()) {
             return new ResponseEntity<>(new Message("El administrador no existe", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
 
-        notificacion.setStatus(estado);
-        notificacion.setComentarios(comentarios);
+        notificacion.setStatus(dto.getEstado());
+        notificacion.setComentarios(dto.getComentarios());
         notificacion.setAdministrador(administradorOptional.get());
 
         notificacion = notificacionRegistroRepository.save(notificacion);
@@ -106,8 +107,9 @@ public class NotificacionRegistroService {
         return new ResponseEntity<>(new Message(notificacion, "Notificación actualizada", TypesResponse.SUCCESS), HttpStatus.OK);
     }
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<Message> aprobarUsuario(Long notificacionId, Long administradorId) {
-        Optional<NotificacionRegistro> notificacionOptional = notificacionRegistroRepository.findById(notificacionId);
+    //public ResponseEntity<Message> aprobarUsuario(Long notificacionId, Long usuarioId) {
+    public ResponseEntity<Message> aprobarUsuario(NotificacionRegistroDto dto) {
+        Optional<NotificacionRegistro> notificacionOptional = notificacionRegistroRepository.findById(dto.getId());
         if (!notificacionOptional.isPresent()) {
             return new ResponseEntity<>(new Message("La notificación no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
@@ -119,9 +121,9 @@ public class NotificacionRegistroService {
             return new ResponseEntity<>(new Message("El usuario asociado no existe", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
 
-        Optional<Usuario> administradorOptional = usuarioRepository.findById(administradorId);
+        Optional<Usuario> administradorOptional = usuarioRepository.findById(usuario.getId());
         if (!administradorOptional.isPresent()) {
-            return new ResponseEntity<>(new Message("El administrador no existe", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
 
         usuario.setEstado(true);
@@ -136,21 +138,21 @@ public class NotificacionRegistroService {
     }
 
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<Message> rechazarUsuario(Long notificacionId, Long administradorId, String motivo) {
-        Optional<NotificacionRegistro> notificacionOptional = notificacionRegistroRepository.findById(notificacionId);
+    public ResponseEntity<Message> rechazarUsuario(NotificacionRegistroDto dto) {
+        Optional<NotificacionRegistro> notificacionOptional = notificacionRegistroRepository.findById(dto.getId());
         if (!notificacionOptional.isPresent()) {
             return new ResponseEntity<>(new Message("La notificación no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
 
         NotificacionRegistro notificacion = notificacionOptional.get();
-        Optional<Usuario> administradorOptional = usuarioRepository.findById(administradorId);
+        Optional<Usuario> administradorOptional = usuarioRepository.findById(dto.getUsuario());
         if (!administradorOptional.isPresent()) {
             return new ResponseEntity<>(new Message("El administrador no existe", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
 
         notificacion.setStatus(EstadoNotificacion.RECHAZADO);
         notificacion.setAdministrador(administradorOptional.get());
-        notificacion.setComentarios(motivo);
+        notificacion.setComentarios(dto.getComentarios());
 
         notificacionRegistroRepository.save(notificacion);
 

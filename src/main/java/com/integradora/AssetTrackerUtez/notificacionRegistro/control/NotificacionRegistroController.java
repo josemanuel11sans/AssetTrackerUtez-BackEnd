@@ -38,18 +38,20 @@ public class NotificacionRegistroController {
         return notificacionRegistroService.crearNotificacion(dto);
     }
 
-    @PutMapping("/actualizarEstado/{id}")
-    public ResponseEntity<Message> actualizarEstado(@PathVariable Long id, @RequestParam EstadoNotificacion estado, @RequestParam String comentarios, @RequestParam Long administradorId) {
-        return notificacionRegistroService.actualizarEstado(id, estado, comentarios, administradorId);
+    @PutMapping("/actualizarEstado")
+    //public ResponseEntity<Message> actualizarEstado(@PathVariable Long id, @RequestParam EstadoNotificacion estado, @RequestParam String comentarios, @RequestParam Long administradorId) {
+    public ResponseEntity<Message> actualizarEstado(@RequestBody NotificacionRegistroDto dto) {
+        return notificacionRegistroService.actualizarEstado(dto);
     }
 
-    @PutMapping("/aprobar/{notificacionId}")
-    public ResponseEntity<Message> aprobarUsuario(@PathVariable Long notificacionId, @RequestParam Long administradorId) {
-        return notificacionRegistroService.aprobarUsuario(notificacionId, administradorId);
+    @PutMapping("/aprobar")
+    //public ResponseEntity<Message> aprobarUsuario(@PathVariable Long notificacionId, @RequestParam Long administradorId) {
+    public ResponseEntity<Message> aprobarUsuario(@RequestBody NotificacionRegistroDto dto) {
+        return notificacionRegistroService.aprobarUsuario(dto);
     }
 
-    @PutMapping("/rechazar/{notificacionId}")
-    public ResponseEntity<Message> rechazarUsuario(@PathVariable Long notificacionId, @RequestParam Long administradorId, @RequestParam String motivo) {
-        return notificacionRegistroService.rechazarUsuario(notificacionId, administradorId, motivo);
+    @PutMapping("/rechazar")
+    public ResponseEntity<Message> rechazarUsuario(@RequestBody NotificacionRegistroDto dto) {
+        return notificacionRegistroService.rechazarUsuario(dto);
     }
 }

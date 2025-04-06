@@ -39,8 +39,8 @@ public class NotificacionRegistroDto {
         this.id = id;
     }
 
-    public UsuarioDto getUsuario() {
-        return usuario;
+    public Long getUsuario() {
+        return usuario.getId();
     }
 
     public void setUsuario(UsuarioDto usuario) {

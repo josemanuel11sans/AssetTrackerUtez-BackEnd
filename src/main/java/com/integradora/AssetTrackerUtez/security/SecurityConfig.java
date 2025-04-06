@@ -125,9 +125,9 @@ public class SecurityConfig {
                                 "notificaciones/all","notificaciones/{id}",
                                 "notificaciones/pendientes",
                                 "notificaciones/crear",
-                                "notificaciones/actualizarEstado/{id}",
-                                "notificaciones/aprobar/{notificacionId}",
-                                "notificaciones/rechazar/{notificacionId}",
+                                "notificaciones/actualizarEstado",
+                                "notificaciones/aprobar",
+                                "notificaciones/rechazar",
                                 //inventarios - levanados
                                 "inventariosLevantados/all",
                                 "inventariosLevantados/save",

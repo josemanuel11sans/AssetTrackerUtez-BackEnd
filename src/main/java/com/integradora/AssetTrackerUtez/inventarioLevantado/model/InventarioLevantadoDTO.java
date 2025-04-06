@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 public class InventarioLevantadoDTO {
 
     @NotNull(groups = {InventarioLevantadoDTO.Modify.class, InventarioLevantadoDTO.ChangeStatus.class},message = "Es necesario el id")
-    private  int id;
+    private  Long id;
     @NotNull(groups = {InventarioLevantadoDTO.Modify.class, InventarioLevantadoDTO.Register.class}, message = "Es nesesario asignar un espacio")
     private int espacio;
 
@@ -16,11 +16,11 @@ public class InventarioLevantadoDTO {
         this.espacio = espacio;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

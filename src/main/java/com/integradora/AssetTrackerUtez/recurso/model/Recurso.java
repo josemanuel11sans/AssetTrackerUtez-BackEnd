@@ -158,18 +158,19 @@ public class Recurso {
     }
 
 
-    public void setResponsable(Responsable resp) {
-
-    }
-
     public InventarioLevantado getInventarioLevantado() {
         return inventarioLevantado;
+    }
+
+    public void setInventarioLevantado(InventarioLevantado inventarioLevantado) {
+        this.inventarioLevantado = inventarioLevantado;
     }
 
     public Responsable getResponsable() {
         return responsable;
     }
 
-    public void setInventarioLevantado(InventarioLevantado inv) {
+    public void setResponsable(Responsable responsable) {
+        this.responsable = responsable;
     }
 }
